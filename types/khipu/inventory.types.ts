@@ -1,3 +1,5 @@
+import { Filter, RequireAtLeastOne } from "../helpers"
+
 //* Business logic types
 export interface InventoryGroup {
     id: string //* UUID
@@ -42,3 +44,7 @@ export interface VariantInventoryItem {
     }
 }
 
+//* Helper Logic types
+export type InventoryGroupEditable = RequireAtLeastOne<Omit<InventoryGroup, "id">>
+export type InventoryGroupInfo = Omit<InventoryGroup, "items">
+export type InventoryGroupFilter = Filter<InventoryGroup>

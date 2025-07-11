@@ -1,5 +1,5 @@
 import { QueryParams, Result } from '@/types/helpers';
-import { CatalogItem, InventoryGroup, InventoryGroupInfo } from '@/types/khipu/inventory.types';
+import { CatalogItem, InventoryGroup, InventoryGroupInfo, InventoryItem, VariantInventoryItem } from '@/types/khipu/inventory.types';
 
 export abstract class InventoryService {
     protected abstract validateGroup(group: InventoryGroup): Promise<Result<void, string>>;
@@ -18,4 +18,10 @@ export abstract class InventoryService {
 
     public abstract loadXlsxCatalog(fileName: string): Promise<Result<string, string>>;
     public abstract getCatalogOfItems(query?: QueryParams<CatalogItem>): Promise<Result<CatalogItem[], string>>;
+
+    public abstract createInventoryItem(
+        groupId: string,
+        catalogItem: CatalogItem,
+        variants: VariantInventoryItem[]
+    ): Promise<Result<InventoryItem, string>>;
 }

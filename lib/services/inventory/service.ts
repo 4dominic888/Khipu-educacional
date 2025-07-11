@@ -1,9 +1,9 @@
 import { QueryParams, Result } from '@/types/helpers';
-import { CatalogItem, InventoryGroup, InventoryGroupInfo, InventoryItem, VariantInventoryItem } from '@/types/khipu/inventory.types';
+import { CatalogItem, InventoryGroup, InventoryGroupEditable, InventoryGroupInfo, InventoryItem, VariantInventoryItem } from '@/types/khipu/inventory.types';
 
 export abstract class InventoryService {
-    protected abstract validateGroup(group: InventoryGroup): Promise<Result<void, string>>;
-    protected abstract createGroup(group: InventoryGroup): Promise<Result<InventoryGroup, string>>;
+    protected abstract validateGroup(group: InventoryGroupEditable): Promise<Result<void, string>>;
+    protected abstract createGroup(group: InventoryGroupEditable): Promise<Result<InventoryGroup, string>>;
 
     public async createGroupWithouItems(group: InventoryGroupInfo): Promise<Result<InventoryGroup, string>> {
         const data = {...group, items: []};

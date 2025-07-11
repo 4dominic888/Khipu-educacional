@@ -46,5 +46,5 @@ export interface VariantInventoryItem {
 
 //* Helper Logic types
 export type InventoryGroupEditable = RequireAtLeastOne<Omit<InventoryGroup, "id">>
-export type InventoryGroupInfo = Omit<InventoryGroup, "items">
+export type InventoryGroupInfo = Omit<InventoryGroupEditable, "items">
 export type InventoryGroupFilter = Filter<InventoryGroup>

@@ -13,4 +13,18 @@ describe('inventory logic type', () => {
         expect(result.value).toBeDefined();
         expect(result.value).toStrictEqual(group);
     });
+
+    it('should be able to load a xlsx catalog file and save it to the database', async () => {
+        const inventoryService : InventoryService = new MockInventoryService();
+
+        const result = await inventoryService.loadXlsxCatalog('test.xlsx');
+
+        expect(result.ok).toBe(true);
+
+        const catalogOfItems = await inventoryService.getCatalogOfItems();
+
+        expect(catalogOfItems.ok).toBe(true);
+        expect(catalogOfItems.value).toBeDefined();
+        expect(catalogOfItems.value).toHaveLength(MockInventoryService.CatalogTestData.length);
+    });
 });

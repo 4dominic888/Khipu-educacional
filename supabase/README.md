@@ -44,14 +44,9 @@ La interfaz de Supabase se accede en la URL llamada STUDIO_URL.
 supabase db reset
 ```
 
-- Migrar la base de datos:
+- Crear una migración vacia:
 ```bash
-supabase db migrate
-```
-
-- Migrar la base de datos y crear un nuevo esquema:
-```bash
-supabase db migrate --create-db
+supabase migration new NAME
 ```
 
 - Generar tipado de los modelos de la BD para typescript:

@@ -34,185 +34,209 @@ export type Database = {
   }
   public: {
     Tables: {
-      inv_group: {
+      acquisition: {
         Row: {
-          created_at: string | null
-          description: string | null
+          date: string
           id: string
-          name: string
-          updated_at: string | null
+          number: string
+          price: number
+          type: string
         }
         Insert: {
-          created_at?: string | null
-          description?: string | null
+          date: string
           id?: string
-          name: string
-          updated_at?: string | null
+          number: string
+          price: number
+          type: string
         }
         Update: {
-          created_at?: string | null
-          description?: string | null
+          date?: string
           id?: string
-          name?: string
-          updated_at?: string | null
+          number?: string
+          price?: number
+          type?: string
         }
         Relationships: []
       }
-      inv_item: {
+      catalog_item: {
         Row: {
-          created_at: string | null
-          group_id: string | null
           id: string
-          image_url: string | null
-          product_type: string
-          serial_number: string | null
-          updated_at: string | null
+          name: string
         }
         Insert: {
-          created_at?: string | null
-          group_id?: string | null
           id?: string
-          image_url?: string | null
-          product_type: string
-          serial_number?: string | null
-          updated_at?: string | null
+          name: string
         }
         Update: {
-          created_at?: string | null
-          group_id?: string | null
           id?: string
-          image_url?: string | null
-          product_type?: string
-          serial_number?: string | null
-          updated_at?: string | null
+          name?: string
+        }
+        Relationships: []
+      }
+      inventory_group: {
+        Row: {
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      inventory_item: {
+        Row: {
+          catalog_item_id: string
+          group_id: string
+          id: string
+          total: number
+        }
+        Insert: {
+          catalog_item_id: string
+          group_id: string
+          id?: string
+          total: number
+        }
+        Update: {
+          catalog_item_id?: string
+          group_id?: string
+          id?: string
+          total?: number
         }
         Relationships: [
           {
-            foreignKeyName: "inv_item_group_id_fkey"
+            foreignKeyName: "inventory_item_catalog_item_id_fkey"
+            columns: ["catalog_item_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_item"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_item_catalog_item_id_fkey"
+            columns: ["catalog_item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_item_summary"
+            referencedColumns: ["catalog_item_id"]
+          },
+          {
+            foreignKeyName: "inventory_item_group_id_fkey"
             columns: ["group_id"]
             isOneToOne: false
-            referencedRelation: "inv_group"
+            referencedRelation: "inventory_group"
             referencedColumns: ["id"]
           },
-        ]
-      }
-      inv_item_dimensions: {
-        Row: {
-          height: number | null
-          item_id: string
-          length: number | null
-          width: number | null
-        }
-        Insert: {
-          height?: number | null
-          item_id: string
-          length?: number | null
-          width?: number | null
-        }
-        Update: {
-          height?: number | null
-          item_id?: string
-          length?: number | null
-          width?: number | null
-        }
-        Relationships: [
           {
-            foreignKeyName: "inv_item_dimensions_item_id_fkey"
-            columns: ["item_id"]
-            isOneToOne: true
-            referencedRelation: "inv_item"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      inv_item_state: {
-        Row: {
-          acquisition_date: string
-          acquisition_number: string
-          acquisition_type: string
-          condition: string
-          id: string
-          item_id: string
-          location: string | null
-          observations: string | null
-          quantity: number
-          unit_value: number
-        }
-        Insert: {
-          acquisition_date: string
-          acquisition_number: string
-          acquisition_type: string
-          condition: string
-          id?: string
-          item_id: string
-          location?: string | null
-          observations?: string | null
-          quantity: number
-          unit_value: number
-        }
-        Update: {
-          acquisition_date?: string
-          acquisition_number?: string
-          acquisition_type?: string
-          condition?: string
-          id?: string
-          item_id?: string
-          location?: string | null
-          observations?: string | null
-          quantity?: number
-          unit_value?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "inv_item_state_item_id_fkey"
-            columns: ["item_id"]
+            foreignKeyName: "inventory_item_group_id_fkey"
+            columns: ["group_id"]
             isOneToOne: false
-            referencedRelation: "inv_item"
+            referencedRelation: "inventory_group_info"
             referencedColumns: ["id"]
           },
         ]
       }
-      inv_item_variant: {
+      variant_inventory_item: {
         Row: {
+          acquisition_id: string
           brand: string | null
-          color: string | null
-          item_id: string
-          material: string | null
+          caracteristic: string | null
+          color: string
+          conservation_status: string
+          count: number
+          height: number
+          id: string
+          images: string[] | null
+          inventory_item_id: string
+          length: number
           model: string | null
-          size: string | null
-          specifications: string | null
+          notes: string | null
+          serial_number: string | null
+          width: number
         }
         Insert: {
+          acquisition_id: string
           brand?: string | null
-          color?: string | null
-          item_id: string
-          material?: string | null
+          caracteristic?: string | null
+          color: string
+          conservation_status: string
+          count: number
+          height: number
+          id?: string
+          images?: string[] | null
+          inventory_item_id: string
+          length: number
           model?: string | null
-          size?: string | null
-          specifications?: string | null
+          notes?: string | null
+          serial_number?: string | null
+          width: number
         }
         Update: {
+          acquisition_id?: string
           brand?: string | null
-          color?: string | null
-          item_id?: string
-          material?: string | null
+          caracteristic?: string | null
+          color?: string
+          conservation_status?: string
+          count?: number
+          height?: number
+          id?: string
+          images?: string[] | null
+          inventory_item_id?: string
+          length?: number
           model?: string | null
-          size?: string | null
-          specifications?: string | null
+          notes?: string | null
+          serial_number?: string | null
+          width?: number
         }
         Relationships: [
           {
-            foreignKeyName: "inv_item_variant_item_id_fkey"
-            columns: ["item_id"]
-            isOneToOne: true
-            referencedRelation: "inv_item"
+            foreignKeyName: "variant_inventory_item_acquisition_id_fkey"
+            columns: ["acquisition_id"]
+            isOneToOne: false
+            referencedRelation: "acquisition"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "variant_inventory_item_inventory_item_id_fkey"
+            columns: ["inventory_item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_item"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "variant_inventory_item_inventory_item_id_fkey"
+            columns: ["inventory_item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_item_summary"
             referencedColumns: ["id"]
           },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      inventory_group_info: {
+        Row: {
+          count: number | null
+          description: string | null
+          id: string | null
+          name: string | null
+        }
+        Relationships: []
+      }
+      inventory_item_summary: {
+        Row: {
+          catalog_item_id: string | null
+          catalog_item_name: string | null
+          id: string | null
+          total: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never

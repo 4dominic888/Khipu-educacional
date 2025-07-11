@@ -21,6 +21,7 @@ export interface Acquisition {
 }
 
 export interface InventoryItem {
+    id: string
     catalogItem: CatalogItem
     variant: VariantInventoryItem[],
     total: number
@@ -48,5 +49,8 @@ export interface VariantInventoryItem {
 
 //* Helper Logic types
 export type InventoryGroupEditable = RequireAtLeastOne<Omit<InventoryGroup, "id">>
-export type InventoryGroupInfo = Omit<InventoryGroupEditable, "items">
+export type InventoryGroupInfo = Omit<InventoryGroupEditable, "items"> & { count: number }
 export type InventoryGroupFilter = Filter<InventoryGroup>
+
+export type InventoryItemSummary = Pick<InventoryItem, "id" | "total" | "catalogItem">
+export type InventoryItemEditable = Omit<InventoryItem, "total" | "id">

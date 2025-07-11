@@ -22,7 +22,8 @@ export interface Acquisition {
 
 export interface InventoryItem {
     catalogItem: CatalogItem
-    variant: VariantInventoryItem[]
+    variant: VariantInventoryItem[],
+    total: number
 }
 
 export interface VariantInventoryItem {
@@ -42,6 +43,7 @@ export interface VariantInventoryItem {
         notes: string
         images: string[]
     }
+    count: number
 }
 
 //* Helper Logic types

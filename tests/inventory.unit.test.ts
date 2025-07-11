@@ -44,6 +44,7 @@ describe('inventory logic type', () => {
         expect(inventoryItem.value).toBeDefined();
         expect(inventoryItem.value).toStrictEqual(MockInventoryService.InventoryItemTestData);
         expect(inventoryItem.value.variant).toHaveLength(2);
+        expect(inventoryItem.value.total).toBe(6);
         expect(group.items).toHaveLength(1);
     });
 });

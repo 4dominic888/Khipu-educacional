@@ -45,7 +45,8 @@ export class MockInventoryService extends InventoryService {
             observations: {
                 notes: 'Notas',
                 images: ['image1.jpg', 'image2.jpg']
-            }
+            },
+            count: 1
         },
         {
             color: 'Rojo',
@@ -68,13 +69,15 @@ export class MockInventoryService extends InventoryService {
             observations: {
                 notes: 'Notas',
                 images: ['image1.jpg', 'image2.jpg']
-            }
+            },
+            count: 5
         }
     ];
 
     public static readonly InventoryItemTestData : InventoryItem = {
         catalogItem: MockInventoryService.CatalogTestData[0],
-        variant: MockInventoryService.VariantTestData
+        variant: MockInventoryService.VariantTestData,
+        total: MockInventoryService.VariantTestData.map(v => v.count).reduce((a, b) => a + b)
     };
 
     public static readonly GroupTestDataWithItems : InventoryGroup = { 
@@ -84,7 +87,8 @@ export class MockInventoryService extends InventoryService {
         items: [
             {
                 catalogItem: MockInventoryService.CatalogTestData[0],
-                variant: MockInventoryService.VariantTestData
+                variant: MockInventoryService.VariantTestData,
+                total: MockInventoryService.VariantTestData.map(v => v.count).reduce((a, b) => a + b)
             }
         ]
     };

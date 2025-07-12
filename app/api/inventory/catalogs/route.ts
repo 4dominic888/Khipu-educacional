@@ -3,20 +3,20 @@ import { CatalogItem } from "@/types/khipu/inventory.types";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
-    const { searchParams } = new URL(req.url)
-    const raw = searchParams.get('query')
-
-    const { sql, values } = rawQueryParamsToSQL<CatalogItem>({
-        rawQuery: raw,
-        selectFields: 'id, name',
-        tableName: 'catalog_item',
-        defaultQuery: {
-            sort: [{ field: 'name', direction: 'asc' }],
-            pagination: { page: 1, pageSize: 20 }
-        }
-    });
-
+    const { searchParams } = new URL(req.url);
+    const raw = searchParams.get('query');
+    
     try {
+        const { sql, values } = rawQueryParamsToSQL<CatalogItem>({
+            rawQuery: raw,
+            selectFields: 'id, name',
+            tableName: 'catalog_item',
+            defaultQuery: {
+                sort: [{ field: 'name', direction: 'asc' }],
+                pagination: { page: 1, pageSize: 20 }
+            }
+        });
+
         const result = await withTransaction(async (client) => {
             const { rows } = await client.query<CatalogItem>(sql, values);
             return NextResponse.json(rows);

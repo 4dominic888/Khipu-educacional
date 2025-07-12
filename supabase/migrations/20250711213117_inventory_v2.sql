@@ -7,7 +7,7 @@ create extension if not exists "pgcrypto";
 
 -- Catálogo
 create table public.catalog_item (
-  id uuid primary key default gen_random_uuid(),
+  id text not null primary key,
   name text not null
 );
 
@@ -22,7 +22,7 @@ create table public.inventory_group (
 create table public.inventory_item (
   id uuid primary key default gen_random_uuid(),
   group_id uuid not null references public.inventory_group(id) on delete cascade,
-  catalog_item_id uuid not null references public.catalog_item(id) on delete restrict,
+  catalog_item_id text not null references public.catalog_item(id) on delete restrict,
   total integer not null check (total >= 0)
 );
 

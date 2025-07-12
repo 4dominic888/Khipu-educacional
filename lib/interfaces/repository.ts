@@ -1,4 +1,5 @@
 import { QueryParams, Result } from "@/types/helpers";
+import { Pool, PoolClient } from "pg";
 
 /**
  * Base genérica para repositorios de datos.
@@ -9,6 +10,10 @@ import { QueryParams, Result } from "@/types/helpers";
  */
 interface RepositoryTypes<T, K, V> {}
 
+/**
+ * Base genérica para repositorios de datos.
+ */
+interface RepositoryBase { readonly db: Pool | PoolClient } 
 
 /** Operación de agregar */
 interface RepositoryAddable<T, V> extends RepositoryTypes<T, any, V> {
@@ -48,6 +53,7 @@ interface RepositoryGetAll<T> extends RepositoryTypes<T, any, any> {
 
 /** Repositorio de lectura y escritura */
 export type RepositoryFull<T, K, V> =
+  RepositoryBase &
   RepositoryAddable<T, V> &
   RepositoryUpdatable<T> &
   RepositoryRemovable &
@@ -57,6 +63,7 @@ export type RepositoryFull<T, K, V> =
 
 /** Repositorio de lectura y escritura */
 export type RepositorySimple<T> =
+  RepositoryBase &
   RepositoryAddable<T, T> &
   RepositoryUpdatable<T> &
   RepositoryRemovable &
@@ -65,6 +72,7 @@ export type RepositorySimple<T> =
 
 /** Repositorio de solo lectura */
 export type RepositoryReadOnly<T, K> =
+  RepositoryBase &
   RepositoryGetOne<T> &
   RepositoryGetAllSummary<T, K> &
   RepositoryGetAll<T>;

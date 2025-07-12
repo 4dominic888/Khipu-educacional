@@ -31,25 +31,25 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-    let CatalogItems : CatalogItem[];
+    let catalogItems : CatalogItem[];
 
     try {
         const body = await req.json();
-        CatalogItems = Array.isArray(body) ? body : [body];
+        catalogItems = Array.isArray(body) ? body : [body];
     }
     catch (error) {
         return NextResponse.json({ error: 'JSON inválido' }, { status: 400 });
     }
 
-    if (CatalogItems.length === 0) return NextResponse.json({ error: 'Datos no proporcionados' }, { status: 400 });
+    if (catalogItems.length === 0) return NextResponse.json({ error: 'Datos no proporcionados' }, { status: 400 });
 
-    const invalid = CatalogItems.find(item => !item.id || !item.name);
+    const invalid = catalogItems.find(item => !item.id || !item.name);
     if (invalid) return NextResponse.json({ error: 'Datos no consistentes' }, { status: 400 });
 
     const values: string[] = [];
     const placeholders: string[] = [];
 
-    CatalogItems.forEach(({ id, name }, i) => {
+    catalogItems.forEach(({ id, name }, i) => {
         const idx = i * 2;
         placeholders.push(`($${idx + 1}, $${idx + 2})`);
         values.push(id, name);

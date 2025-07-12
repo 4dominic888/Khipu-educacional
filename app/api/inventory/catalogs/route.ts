@@ -2,6 +2,26 @@ import { rawQueryParamsToSQL, withTransaction } from "@/lib/db";
 import { CatalogItem } from "@/types/khipu/inventory.types";
 import { NextResponse } from "next/server";
 
+/**
+ * Maneja solicitudes GET para consultar elementos del catálogo.
+ *
+ * @param req Objeto `Request` de Next.js con un parámetro opcional `query` en formato JSON codificado por URL, de tipo `QueryParams<CatalogItem>`.
+ * @returns Una respuesta JSON con un arreglo de `CatalogItem[]` o un error.
+ *
+ * @example
+ * // Request:
+ * GET /api/catalog_item?query=%7B%22filter%22%3A%7B%22name%22%3A%7B%22op%22%3A%22contains%22%2C%22value%22%3A%22tool%22%7D%7D%7D
+ * 
+ * o
+ * 
+ * GET /api/catalog_item
+ *
+ * // Response:
+ * [
+ *   { "id": "1535", "name": "MESA DE ADOBE" },
+ *   { "id": "1536", "name": "PUERTA DE HIERRO" },
+ * ]
+ */
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const raw = searchParams.get('query');
@@ -30,6 +50,33 @@ export async function GET(req: Request) {
     }
 }
 
+
+/**
+ * Maneja solicitudes POST para insertar uno o varios elementos en el catálogo.
+ *
+ * - El cuerpo debe contener un objeto o arreglo de objetos `CatalogItem`, con:
+ *   - `id`: Código en el catálogo
+ *   - `name`: Nombre del elemento
+ * - Los datos se validan (formato JSON, campos obligatorios) antes de insertarse.
+ * - Se ejecuta un `INSERT INTO` con placeholders parametrizados para seguridad SQL.
+ * - La operación se realiza dentro de una transacción SQL.
+ *
+ * @param req Objeto `Request` de Next.js con el cuerpo JSON, pide un tipo `CatalogItem` o `CatalogItem[]`. 
+ * @returns Una respuesta JSON con `{ count: number }` (filas insertadas) o mensaje de error.
+ *
+ * @example
+ * // Request:
+ * POST /api/catalog_item
+ * Content-Type: application/json
+ * 
+ * [
+ *   { "id": "uuid-1", "name": "Toolbox" },
+ *   { "id": "uuid-2", "name": "Screwdriver Set" }
+ * ]
+ *
+ * // Response:
+ * { "count": 2 }
+ */
 export async function POST(req: Request) {
     let catalogItems : CatalogItem[];
 

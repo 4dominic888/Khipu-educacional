@@ -158,17 +158,33 @@ export async function runQuery<T extends QueryResultRow>(
 }
 
 /**
+ * Convierte un string que originalmente era un JSON pero es un URIComponent a un JSON.
+ * @param input El URIComponent a convertir
+ * @returns El JSON o `undefined` si no se logra convertir.
+ */
+function uriComponentToJson(input: string): any | undefined {
+  try {
+    return JSON.parse(decodeURIComponent(input));
+  } catch(error) {
+    console.log(error);
+    return undefined;
+  }
+}
+
+/**
  * Convierte un string que originalmente era un JSON pero esta en URL a un objeto de tipo `QueryParams`.
  * @param raw JSON en URL
  * @returns Objeto de tipo `QueryParams` o `undefined` si no se logra convertir.
  */
 export function rawToQueryParams<T>(raw: string | null): QueryParams<T> | undefined {
   if (raw) {
-    const parsed = JSON.parse(decodeURIComponent(raw));
+    const queryParams = uriComponentToJson(raw);
+    if(!queryParams) return undefined;
+
     return {
-        filter: parsed.filter,
-        sort: parsed.sort,
-        pagination: parsed.pagination
+      filter: queryParams.filter,
+      sort: queryParams.sort,
+      pagination: queryParams.pagination
     };
   }
 }

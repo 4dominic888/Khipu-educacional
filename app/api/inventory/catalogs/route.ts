@@ -7,17 +7,21 @@ import { CatalogItem } from "@/types/khipu/inventory.types";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
-    const { searchParams } = new URL(req.url);
-    const raw = searchParams.get('queryParams');
-    const queryParams = rawToQueryParams<CatalogItem>(raw);
-    if (!queryParams) return NextResponse.json({ error: 'Parametros no reconocidos' }, { status: 400 });
+    try {
+        const { searchParams } = new URL(req.url);
+        const raw = searchParams.get('queryParams');
+        const queryParams = rawToQueryParams<CatalogItem>(raw);
 
-    getTransactionMethod(req)(async (client) => {
-        const repo : RepositorySimpleWithAddAll<CatalogItem> = new CatalogInventoryRepository(client);
-        const result = await repo.getAll(queryParams);
-        if(result.length === 0) return NextResponse.json({ error: 'No se encontraron elementos' }, { status: 404 });
-        return NextResponse.json(result);
-    });
+        return await getTransactionMethod(req)(async (client) => {
+            const repo : RepositorySimpleWithAddAll<CatalogItem> = new CatalogInventoryRepository(client);
+            const result = await repo.getAll(queryParams);
+            if(result.length === 0) return NextResponse.json({ error: 'No se encontraron elementos' }, { status: 404 });
+            return NextResponse.json(result);
+        });
+    }
+    catch (error) {
+        return NextResponse.json({ error: error }, { status: 500 });
+    }
 }
 
 export async function POST(req: Request) {

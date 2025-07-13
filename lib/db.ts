@@ -70,6 +70,19 @@ export async function withTransaction<T>(fn: (client: PoolClient) => Promise<T>)
   }
 }
 
+/**
+ * Función auxiliar para obtener el método de transacción adecuado según la URL
+ * 
+ * La URL puede contener una consulta GET con el parámetro `test=true` para ejecutar las operaciones en modo de prueba.
+ * @param req 
+ * @returns 
+ */
+export function getTransactionMethod(req: Request): (fn: (client: PoolClient) => Promise<unknown>) => Promise<unknown> {
+  const { searchParams } = new URL(req.url);
+  const isTest = searchParams.get('test') === 'true';
+  return isTest ? withTestTransaction : withTransaction;
+}
+
 type QueryParamsToSqlParams<T> = {
   query: QueryParams<T>,
   selectFields: string,

@@ -1,4 +1,4 @@
-import { failure, Filter, FilterOperator, Pagination, Result, SortOrder, success } from "@/types/helpers";
+import { failure, Filter, FilterOperator, Pagination, QueryParams, Result, SortOrder, success } from "@/types/helpers";
 import { clsx, type ClassValue } from "clsx"
 import { Pool, PoolClient, QueryResultRow } from "pg";
 import { twMerge } from "tailwind-merge"
@@ -154,5 +154,21 @@ export async function runQuery<T extends QueryResultRow>(
   } catch (error) {
     console.error(error);
     return failure(errorMessage);
+  }
+}
+
+/**
+ * Convierte un string que originalmente era un JSON pero esta en URL a un objeto de tipo `QueryParams`.
+ * @param raw JSON en URL
+ * @returns Objeto de tipo `QueryParams` o `undefined` si no se logra convertir.
+ */
+export function rawToQueryParams<T>(raw: string | null): QueryParams<T> | undefined {
+  if (raw) {
+    const parsed = JSON.parse(decodeURIComponent(raw));
+    return {
+        filter: parsed.filter,
+        sort: parsed.sort,
+        pagination: parsed.pagination
+    };
   }
 }

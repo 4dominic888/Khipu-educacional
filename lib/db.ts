@@ -146,8 +146,7 @@ export function buildPagination(p?: Pagination): string {
  * // sql: "WHERE name ILIKE $1 AND age > $2"
  * // values: ["%ana%", 18]
  */
-export function buildWhere<T>(filter?: Filter<T>): { sql: string; values: unknown[] } {
-  const clauses: string[] = [];
+export function buildWhere<T>(filter?: Filter<T>): { sql: string; values: any[] } {
   const values: unknown[] = [];
   let paramIndex = 1;
 
@@ -216,5 +215,5 @@ export function QueryParamsToSql<T>({ query, selectFields, tableName } : QueryPa
       ${pagination}`
   ;
 
-  return { sql: sqlQuery, values: [] };
+  return { sql: sqlQuery, values: where.values };
 }

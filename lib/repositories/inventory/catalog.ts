@@ -40,11 +40,23 @@ export class CatalogInventoryRepository implements RepositorySimpleWithAddAll<Ca
     }
 
     async update(data: CatalogItem): Promise<Result<CatalogItem, string>> {
-        throw new Error("Method not implemented.");
+        return runQuery<CatalogItem>({
+            db: this.db,
+            query: 'UPDATE catalog_item SET id = $1, name = $2 WHERE id = $3 RETURNING *',
+            params: [data.id, data.name, data.id],
+            errorMessage: 'No se ha actualizado este elemento del catalogo'
+        });
     }
 
     async remove(id: string): Promise<Result<null, string>> {
-        throw new Error("Method not implemented.");
+        const result = await runQuery({
+            db: this.db,
+            query: 'DELETE FROM catalog_item WHERE id = $1 RETURNING *',
+            params: [id],
+            errorMessage: 'No se ha eliminado el elemento del catalogo'
+        });
+
+        return result.ok ? success(null) : failure('No se ha eliminado el elemento del catalogo');
     }
 
     async get(id: string): Promise<CatalogItem | null> {

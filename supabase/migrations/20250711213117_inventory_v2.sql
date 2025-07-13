@@ -22,7 +22,7 @@ create table public.inventory_group (
 create table public.inventory_item (
   id uuid primary key default gen_random_uuid(),
   group_id uuid not null references public.inventory_group(id) on delete cascade,
-  catalog_item_id text not null references public.catalog_item(id) on delete restrict,
+  catalog_item_id text not null references public.catalog_item(id) on delete cascade,
   total integer not null check (total >= 0)
 );
 
@@ -48,7 +48,7 @@ create table public.variant_inventory_item (
   model text,
   caracteristic text,
   conservation_status text check (conservation_status in ('Bueno', 'Regular', 'Malo')) not null,
-  acquisition_id uuid not null references public.acquisition(id) on delete restrict,
+  acquisition_id uuid not null references public.acquisition(id) on delete cascade,
   notes text,
   images text[],
   count integer not null check (count > 0)

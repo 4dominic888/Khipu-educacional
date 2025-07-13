@@ -1,11 +1,11 @@
 import { QueryParamsToSql } from "@/lib/db";
-import { RepositorySimpleWithAddAll } from "@/lib/interfaces/repository";
+import { RepositorySimpleWithAddAll, RepositorySimpleWithAddAllAndRemoveAll } from "@/lib/interfaces/repository";
 import { runQuery } from "@/lib/utils";
 import { Result, QueryParams, success, failure } from "@/types/helpers";
 import { CatalogItem } from "@/types/khipu/inventory.types";
 import { Pool, PoolClient } from "pg";
 
-export class CatalogInventoryRepository implements RepositorySimpleWithAddAll<CatalogItem> {
+export class CatalogInventoryRepository implements RepositorySimpleWithAddAllAndRemoveAll<CatalogItem> {
 
     constructor(readonly db: Pool | PoolClient) {} 
 
@@ -57,6 +57,10 @@ export class CatalogInventoryRepository implements RepositorySimpleWithAddAll<Ca
         });
 
         return result.ok ? success(null) : failure('No se ha eliminado el elemento del catalogo');
+    }
+
+    async removeAll(ids: string[]): Promise<Result<null, string>> {
+        throw new Error("Method not implemented.");
     }
 
     async get(id: string): Promise<CatalogItem | null> {

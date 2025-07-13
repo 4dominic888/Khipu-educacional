@@ -111,7 +111,7 @@ describe('inventory logic integration test', () => {
             expect(result.ok).toBe(true);
             
             const getResult = await catalogItemRepository.get('00000000-0000-0000-0000-000000000001');
-            expect(getResult).toBeNull();
+            expect(getResult).toBeUndefined();
 
             const getAllResult = await catalogItemRepository.getAll();
             expect(getAllResult.length).toBe(2);

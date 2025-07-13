@@ -38,6 +38,10 @@ interface RepositoryRemovable {
   remove(id: string): Promise<Result<null, string>>;
 }
 
+interface RepositoryRemoveAllable {
+  removeAll(ids: string[]): Promise<Result<null, string>>;
+}
+
 /** Obtener una entidad por ID */
 interface RepositoryGetOne<T> extends RepositoryTypes<T, any, any> {
   get(id: string): Promise<T | null>;
@@ -77,6 +81,11 @@ export type RepositorySimple<T> =
 export type RepositorySimpleWithAddAll<T> =
   RepositorySimple<T> &
   RepositoryAddAllable<T>;
+
+export type RepositorySimpleWithAddAllAndRemoveAll<T> =
+  RepositorySimple<T> &
+  RepositoryAddAllable<T> &
+  RepositoryRemoveAllable;
 
 /** Repositorio de solo lectura */
 export type RepositoryReadOnly<T, K> =

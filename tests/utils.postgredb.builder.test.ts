@@ -1,4 +1,4 @@
-import { buildOrder, buildPagination, buildWhere } from "@/lib/utils"
+import { buildOrder, buildPagination, buildWhere } from "@/lib/db"
 import { Filter, Pagination, SortOrder } from "@/types/helpers";
 
 //* Tipo de dato de prueba para probar este test

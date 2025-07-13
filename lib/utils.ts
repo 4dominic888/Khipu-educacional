@@ -1,5 +1,6 @@
-import { Filter, FilterOperator, Pagination, SortOrder } from "@/types/helpers";
+import { failure, Filter, FilterOperator, Pagination, Result, SortOrder, success } from "@/types/helpers";
 import { clsx, type ClassValue } from "clsx"
+import { Pool, PoolClient, QueryResultRow } from "pg";
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
@@ -119,5 +120,39 @@ export function buildWhere<T>(filter?: Filter<T>): { sql: string; values: unknow
   return {
     sql: sqlBody ? `WHERE ${sqlBody}` : '',
     values,
+  }
+}
+
+type RunQueryParams = {
+  db: Pool | PoolClient,
+  query: string,
+  params: unknown[],
+  errorMessage: string
+}
+
+/**
+ * Ejecuta una consulta SQL con manejo de errores y respuesta tipada.
+ * 
+ * @template T Tipo del dato esperado en la respuesta.
+ * @param db Conexión a la base de datos (`Pool` o `PoolClient`).
+ * @param query SQL parametrizado.
+ * @param params Parámetros del SQL.
+ * @param errorMessage Mensaje personalizado para devolver en caso de error o fallo.
+ * @returns Resultado de tipo `Result<T, string>` conteniendo el primer registro, o un mensaje de error.
+ */
+export async function runQuery<T extends QueryResultRow>(
+  {db, query, params, errorMessage} : RunQueryParams
+): Promise<Result<T, string>> {
+  try {
+    const { rows, rowCount } = await db.query<T>(query, params);
+
+    if (!rowCount || rows.length === 0) {
+      return failure(errorMessage);
+    }
+
+    return success(rows[0]);
+  } catch (error) {
+    console.error(error);
+    return failure(errorMessage);
   }
 }

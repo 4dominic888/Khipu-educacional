@@ -13,11 +13,15 @@ interface RepositoryTypes<T, K, V> {}
 /**
  * Base genérica para repositorios de datos.
  */
-interface RepositoryBase { readonly db: Pool | PoolClient } 
+interface RepositoryBase {  readonly db: Pool | PoolClient }  
 
 /** Operación de agregar */
 interface RepositoryAddable<T, V> extends RepositoryTypes<T, any, V> {
   add(data: V): Promise<Result<T, string>>;
+}
+
+interface RepositoryAddAllable<T> extends RepositoryTypes<T, any, any> {
+  addAll(data: T[]): Promise<Result<undefined, string>>;
 }
 
 /** 
@@ -69,6 +73,10 @@ export type RepositorySimple<T> =
   RepositoryRemovable &
   RepositoryGetOne<T> &
   RepositoryGetAll<T>;
+
+export type RepositorySimpleWithAddAll<T> =
+  RepositorySimple<T> &
+  RepositoryAddAllable<T>;
 
 /** Repositorio de solo lectura */
 export type RepositoryReadOnly<T, K> =

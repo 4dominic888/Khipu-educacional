@@ -1,25 +1,41 @@
-import { RepositorySimple } from "@/lib/interfaces/repository";
+import { QueryParamsToSql } from "@/lib/db";
+import { RepositorySimpleWithAddAll } from "@/lib/interfaces/repository";
+import { runQuery } from "@/lib/utils";
 import { Result, QueryParams, success, failure } from "@/types/helpers";
 import { CatalogItem } from "@/types/khipu/inventory.types";
 import { Pool, PoolClient } from "pg";
 
-export class CatalogInventoryRepository implements RepositorySimple<CatalogItem> {
+export class CatalogInventoryRepository implements RepositorySimpleWithAddAll<CatalogItem> {
 
     constructor(readonly db: Pool | PoolClient) {} 
 
     async add(data: CatalogItem): Promise<Result<CatalogItem, string>> {
+        return runQuery<CatalogItem>({
+            db: this.db,
+            query: 'INSERT INTO catalog_item (id, name) VALUES ($1, $2) RETURNING *',
+            params: [data.id, data.name],
+            errorMessage: 'No se ha agregado el catalogo'
+        });
+    }
+
+    async addAll(data: CatalogItem[]): Promise<Result<undefined, string>> {
+        if (data.length === 0) return failure('No hay datos a agregar');
+        const values: string[] = [];
+        const placeholders: string[] = [];
+
+        data.forEach(({ id, name }, i) => {
+            const idx = i * 2;
+            placeholders.push(`($${idx + 1}, $${idx + 2})`);
+            values.push(id, name);
+        });
+
+        const query = `INSERT INTO catalog_item (id, name) VALUES ${placeholders.join(', ')}`;
         try {
-            const { rows, rowCount } = await this.db.query<CatalogItem>(
-                'INSERT INTO catalog_item (id, name) VALUES ($1, $2) RETURNING *',
-                [data.id, data.name]
-            );
-    
-            if (!rowCount) return failure('No se ha agregado el catalogo');
-            
-            return success(rows[0]);
+            await this.db.query(query, values);
+            return success(undefined);
         } catch (error) {
             console.log(error);
-            return failure('Error al agregar el catalogo');
+            return failure('Ocurrió un error inesperado');
         }
     }
 
@@ -32,10 +48,27 @@ export class CatalogInventoryRepository implements RepositorySimple<CatalogItem>
     }
 
     async get(id: string): Promise<CatalogItem | null> {
-        throw new Error("Method not implemented.");
+        const result = await runQuery<CatalogItem>({
+            db: this.db,
+            query: 'SELECT * FROM catalog_item WHERE id = $1',
+            params: [id],
+            errorMessage: 'No se ha encontrado el elemento'
+        });
+
+        return result.value;
     }
 
     async getAll(query?: QueryParams<CatalogItem> | undefined): Promise<CatalogItem[]> {
-        throw new Error("Method not implemented.");
+        const { sql, values } = QueryParamsToSql<CatalogItem>({
+            query: query ?? {
+                sort: [{ field: 'name', direction: 'asc' }],
+                pagination: { page: 1, pageSize: 20 }
+            },
+            selectFields: 'id, name',
+            tableName: 'catalog_item'
+        });
+
+        const { rows } = await this.db.query<CatalogItem>(sql, values);
+        return rows;
     }
 }

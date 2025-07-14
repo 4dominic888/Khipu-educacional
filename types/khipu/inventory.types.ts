@@ -5,7 +5,8 @@ export interface InventoryGroup {
     id: string //* UUID
     name: string
     description?: string
-    items: InventoryItem[]
+    items: InventoryItem[],
+    update_at?: string
 }
 
 export interface CatalogItem {
@@ -24,7 +25,8 @@ export interface InventoryItem {
     id: string
     catalogItem: CatalogItem
     variant: VariantInventoryItem[],
-    total: number
+    total: number,
+    update_at?: string
 }
 
 export interface VariantInventoryItem {
@@ -44,7 +46,8 @@ export interface VariantInventoryItem {
         notes: string
         images: string[]
     }
-    count: number
+    count: number,
+    update_at?: string
 }
 
 //* Helper Logic types

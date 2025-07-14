@@ -1,5 +1,5 @@
 import { QueryParamsToSql } from "@/lib/db";
-import { RepositorySimpleWithAddAll, RepositorySimpleWithAddAllAndRemoveAll } from "@/lib/interfaces/repository";
+import { RepositorySimpleWithAddAllAndRemoveAll } from "@/lib/interfaces/repository";
 import { runQuery } from "@/lib/utils";
 import { Result, QueryParams, success, failure } from "@/types/helpers";
 import { CatalogItem } from "@/types/khipu/inventory.types";
@@ -60,7 +60,17 @@ export class CatalogInventoryRepository implements RepositorySimpleWithAddAllAnd
     }
 
     async removeAll(ids: string[]): Promise<Result<null, string>> {
-        throw new Error("Method not implemented.");
+        try {
+            const placeholders = ids.map((_, i) => `$${i + 1}`).join(', ');
+            const isIdsEmpty : boolean = ids.length === 0;
+            const query = isIdsEmpty ? `DELETE FROM catalog_item` : `DELETE FROM catalog_item WHERE id IN (${placeholders})`;
+            await this.db.query(query, ids);
+            return success(null, "Eliminación exitosa");
+        }
+        catch (error) {
+            console.log(error);
+            return failure('Ocurrió un error inesperado');
+        }
     }
 
     async get(id: string): Promise<CatalogItem | null> {

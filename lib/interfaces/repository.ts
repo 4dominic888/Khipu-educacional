@@ -40,6 +40,7 @@ interface RepositoryRemovable {
 
 interface RepositoryRemoveAllable {
   removeAll(ids: string[]): Promise<Result<null, string>>;
+  removeEverything(): Promise<Result<null, string>>;
 }
 
 /** Obtener una entidad por ID */

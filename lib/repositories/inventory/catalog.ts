@@ -1,4 +1,4 @@
-import { QueryParamsToSql } from "@/lib/db";
+import { SelectQueryParamsToSql } from "@/lib/db";
 import { RepositorySimpleWithAddAllAndRemoveAll } from "@/lib/interfaces/repository";
 import { runQuery } from "@/lib/utils";
 import { Result, QueryParams, success, failure } from "@/types/helpers";
@@ -9,6 +9,11 @@ export class CatalogInventoryRepository implements RepositorySimpleWithAddAllAnd
 
     constructor(readonly db: Pool | PoolClient) {} 
 
+    /**
+     * Agrega un nuevo elemento al catalogo
+     * @param data CatalogItem
+     * @returns Un ´Result´ con el mismo catálogo si la operación tuvo éxito, o un mensaje de error si no.
+     */
     async add(data: CatalogItem): Promise<Result<CatalogItem, string>> {
         return runQuery<CatalogItem>({
             db: this.db,
@@ -18,6 +23,11 @@ export class CatalogInventoryRepository implements RepositorySimpleWithAddAllAnd
         });
     }
 
+    /**
+     * Agrega varios nuevos elementos al catalogo
+     * @param data Array de CatalogItem
+     * @returns Un ´Result´ sin más, el dato no tiene relevancia, o un mensaje de error si no.
+     */
     async addAll(data: CatalogItem[]): Promise<Result<undefined, string>> {
         if (data.length === 0) return failure('No hay datos a agregar');
         const values: string[] = [];
@@ -39,6 +49,11 @@ export class CatalogInventoryRepository implements RepositorySimpleWithAddAllAnd
         }
     }
 
+    /**
+     * Actualiza un elemento del catalogo
+     * @param data CatalogItem
+     * @returns Un ´Result´ con el mismo catálogo si la operación tuvo éxito, o un mensaje de error si no.
+     */
     async update(data: CatalogItem): Promise<Result<CatalogItem, string>> {
         return runQuery<CatalogItem>({
             db: this.db,
@@ -48,6 +63,11 @@ export class CatalogInventoryRepository implements RepositorySimpleWithAddAllAnd
         });
     }
 
+    /**
+     * Elimina un elemento del catalogo
+     * @param id Identificador del elemento a eliminar
+     * @returns Un ´Result´ sin más, el dato no tiene relevancia, o un mensaje de error si no.
+     */
     async remove(id: string): Promise<Result<null, string>> {
         const result = await runQuery({
             db: this.db,
@@ -56,14 +76,18 @@ export class CatalogInventoryRepository implements RepositorySimpleWithAddAllAnd
             errorMessage: 'No se ha eliminado el elemento del catalogo'
         });
 
-        return result.ok ? success(null) : failure('No se ha eliminado el elemento del catalogo');
+        return result.ok ? success(null, 'Eliminación exitosa') : failure('No se ha eliminado el elemento del catalogo');
     }
 
+    /**
+     * Elimina un conjunto de elemento del catalogo.
+     * @param ids El conjunto de identificadores de los elementos a eliminar.
+     * @returns Un ´Result´ sin más, el dato no tiene relevancia, o un mensaje de error si no.
+     */
     async removeAll(ids: string[]): Promise<Result<null, string>> {
         try {
             const placeholders = ids.map((_, i) => `$${i + 1}`).join(', ');
-            const isIdsEmpty : boolean = ids.length === 0;
-            const query = isIdsEmpty ? `DELETE FROM catalog_item` : `DELETE FROM catalog_item WHERE id IN (${placeholders})`;
+            const query = `DELETE FROM catalog_item WHERE id IN (${placeholders})`;
             await this.db.query(query, ids);
             return success(null, "Eliminación exitosa");
         }
@@ -73,6 +97,26 @@ export class CatalogInventoryRepository implements RepositorySimpleWithAddAllAnd
         }
     }
 
+    /**
+     * Elimina todos los elementos del catalogo.
+     * @returns Un ´Result´ sin más, el dato no tiene relevancia, o un mensaje de error si no.
+     */
+    async removeEverything(): Promise<Result<null, string>> {
+        try {
+            await this.db.query('DELETE FROM catalog_item');
+            return success(null, "Eliminación exitosa");
+        }
+        catch (error) {
+            console.log(error);
+            return failure('Ocurrió un error inesperado');
+        }
+    }
+
+    /**
+     * Obtiene un elemento del catalogo por su identificador.
+     * @param id Identificador del elemento a obtener.
+     * @returns El elemento con la identificador especificada, o `null` si no se encuentra.
+     */
     async get(id: string): Promise<CatalogItem | null> {
         const result = await runQuery<CatalogItem>({
             db: this.db,
@@ -84,8 +128,13 @@ export class CatalogInventoryRepository implements RepositorySimpleWithAddAllAnd
         return result.value;
     }
 
+    /**
+     * Obtiene todos los elementos del catalogo.
+     * @param query Parametros de búsqueda opcionales.
+     * @returns Un array de todos los elementos del catalogo.
+     */
     async getAll(query?: QueryParams<CatalogItem> | undefined): Promise<CatalogItem[]> {
-        const { sql, values } = QueryParamsToSql<CatalogItem>({
+        const { sql, values } = SelectQueryParamsToSql<CatalogItem>({
             query: query ?? {
                 sort: [{ field: 'name', direction: 'asc' }],
                 pagination: { page: 1, pageSize: 20 }

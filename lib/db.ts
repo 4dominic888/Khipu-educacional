@@ -203,7 +203,17 @@ export function buildWhere<T>(filter?: Filter<T>): { sql: string; values: any[] 
   }
 }
 
-export function QueryParamsToSql<T>({ query, selectFields, tableName } : QueryParamsToSqlParams<T>) : { sql: string, values: T[] } {
+/**
+ * Función auxiliar para generar una consulta SQL de SELECT en base a un objeto de tipo `QueryParams<T>`.
+ * @param param0 Un objeto que lleva los siguientes campos:
+ * - `query`: objeto de tipo `QueryParams<T>` que contiene los filtros, ordenamientos y paginación.
+ * - `selectFields`: string con los campos a seleccionar.
+ * - `tableName`: string con el nombre de la tabla.
+ * @returns Un objeto `{ sql, values }` donde:
+ * - `sql`: string de la consulta SQL.
+ * - `values`: array de valores a pasar como parámetros en una consulta `pg.query(sql, values)`.
+ */
+export function SelectQueryParamsToSql<T>({ query, selectFields, tableName } : QueryParamsToSqlParams<T>) : { sql: string, values: T[] } {
   const where = buildWhere(query.filter);
   const order = buildOrder(query.sort);
   const pagination = buildPagination(query.pagination);

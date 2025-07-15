@@ -1,6 +1,6 @@
 import { withTestTransaction } from "@/lib/db";
-import { CatalogInventoryRepository } from "@/lib/repositories/inventory";
-import { CatalogItem } from "@/types/khipu/inventory.types";
+import { CatalogInventoryRepository, GroupInventoryRepository, InventoryRepository } from "@/lib/repositories/inventory";
+import { CatalogItem, InventoryGroup, InventoryGroupEditable, InventoryGroupInfo } from "@/types/khipu/inventory.types";
 
 describe('inventory logic integration test', () => {
     it('should add a catalog item', async () => {
@@ -115,6 +115,79 @@ describe('inventory logic integration test', () => {
 
             const getAllResult = await catalogItemRepository.getAll();
             expect(getAllResult.length).toBe(2);
+        });
+    });
+});
+
+describe('inventory group logic integration test', () => {
+    it('should add a inventory group', async () => {
+        await withTestTransaction(async (client) => {
+            const inventoryGroupRepository = new GroupInventoryRepository(client);
+            const inventoryGroup : InventoryGroupEditable = {
+                name: 'Almacen',
+                description: 'Habitación del segundo piso'
+            }
+
+            const result = await inventoryGroupRepository.add(inventoryGroup);
+            expect(result.ok).toBe(true);
+            expect(result.value.id).toBeDefined();
+            expect(result.value.name).toBe('AULA 1');
+            expect(result.value.description).toBe('Aula del segundo piso');
+        });
+    });
+
+    it('should update a inventory group', async () => {
+        await withTestTransaction(async (client) => {
+            const inventoryGroupRepository = new GroupInventoryRepository(client);
+            const expectedInventoryGroup : InventoryGroup = {
+                id: '10000000-0000-0000-0000-000000000001',
+                name: 'AULA 2',
+                description: 'Aula del segundo piso',
+                items: [],
+            }
+
+            const result = await inventoryGroupRepository.update(expectedInventoryGroup);
+            expect(result.ok).toBe(true);
+            expect(result.value.name).toBe('AULA 2');
+            expect(result.value.description).toBe('Aula del segundo piso');
+        });
+    });
+
+    it('should remove a inventory group', async () => {
+        await withTestTransaction(async (client) => {
+            const inventoryGroupRepository = new GroupInventoryRepository(client);
+            const result = await inventoryGroupRepository.remove('10000000-0000-0000-0000-000000000001');
+            expect(result.ok).toBe(true);
+            
+            const getResult = await inventoryGroupRepository.get('10000000-0000-0000-0000-000000000001');
+            expect(getResult).toBeUndefined();
+
+            const getAllResult = await inventoryGroupRepository.getAll();
+            expect(getAllResult.length).toBe(1);
+        });
+    });
+
+    it('should get a inventory group summary', async () => {
+        await withTestTransaction(async (client) => {
+            const inventoryGroupRepository = new GroupInventoryRepository(client);
+
+            const expectedSummary : InventoryGroupInfo[] = [
+                {
+                    id: '10000000-0000-0000-0000-000000000001',
+                    name: 'Aula 1',
+                    description: 'Aula del segundo piso',
+                    count: 15
+                },
+                {
+                    id: '10000000-0000-0000-0000-000000000002',
+                    name: 'Cocina',
+                    description: 'Área de preparación de alimentos',
+                    count: 2
+                }
+            ]
+
+            const result = await inventoryGroupRepository.getAllSummary();
+            expect(result).toStrictEqual(expectedSummary);
         });
     });
 });

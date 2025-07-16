@@ -1,7 +1,5 @@
 import { RequireAtLeastOne } from "@/core/shared";
-import { CatalogItem, InventoryGroup, InventoryItem, VariantInventoryItem } from "@/core/domain";
-
-export type CatalogItemEditable = RequireAtLeastOne<Partial<Omit<CatalogItem, "id">>>;
+import { InventoryGroup, InventoryItem, VariantInventoryItem } from "@/core/domain";
 
 export type InventoryGroupEditable = RequireAtLeastOne<Partial<Omit<InventoryGroup, "id" |"items">>>;
 export type InventoryGroupInfo = Omit<InventoryGroup, "items"> & { count: number };

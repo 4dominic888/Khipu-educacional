@@ -1,7 +1,6 @@
 import { Result } from "@/core/shared";
 import {
     CatalogItem,
-    CatalogItemEditable,
     InventoryGroup,
     InventoryGroupEditable,
     InventoryGroupInfo,
@@ -28,7 +27,7 @@ import {
  * Solo se encarga de un CRUD sencillo sin más.
  */
 export interface CatalogItemRepository extends
-    RepositoryFull<CatalogItem, CatalogItem, CatalogItemEditable>,
+    RepositoryFull<CatalogItem, CatalogItem, CatalogItem>,
     RepositoryAddAllable<CatalogItem>,
     RepositoryRemovableAllable,
     RepositoryRemovableEverythingable

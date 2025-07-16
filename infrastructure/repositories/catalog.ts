@@ -10,7 +10,14 @@ export class PostgresCatalogItemRepository implements CatalogItemRepository, Pos
     constructor(readonly db: Pool | PoolClient) {};
 
     async count(): Promise<Result<number, string>> {
-        throw new Error("Method not implemented.");
+        try {
+            const { rows } = await this.db.query('SELECT COUNT(*) FROM catalog_item');
+            return success(parseInt(rows[0].count ?? '0'));
+        }
+        catch (error) {
+            console.log(error);
+            return failure('Ocurrió un error inesperado');
+        }
     }
 
     async add(data: CatalogItem): Promise<Result<CatalogItem, string>> {
@@ -54,7 +61,7 @@ export class PostgresCatalogItemRepository implements CatalogItemRepository, Pos
     }
     
     async getAll(query?: QueryParams<CatalogItem> | undefined): Promise<CatalogItem[]> {
-        const { sql, values } = pgdbu.SelectQueryParamsToSql<CatalogItem>({
+        const { sql, values } = pgdbu.selectQueryParamsToSql<CatalogItem>({
             query: query ?? {
                 sort: [{ field: 'name', direction: 'asc' }],
                 pagination: { page: 1, pageSize: 20 }

@@ -1,4 +1,10 @@
 -- ========================
+-- Periodos
+-- ========================
+insert into public.period_time (id, name) values
+  ('00000000-0000-0000-0000-000000000000', '2024');
+
+-- ========================
 -- Catálogo
 -- ========================
 insert into public.catalog_item (id, name) values
@@ -9,9 +15,9 @@ insert into public.catalog_item (id, name) values
 -- ========================
 -- Grupos de inventario
 -- ========================
-insert into public.inventory_group (id, name, description) values
-  ('10000000-0000-0000-0000-000000000001', 'Aula 1', 'Aula del segundo piso'),
-  ('10000000-0000-0000-0000-000000000002', 'Cocina', 'Área de preparación de alimentos');
+insert into public.inventory_group (id, name, description, period) values
+  ('10000000-0000-0000-0000-000000000001', 'Aula 1', 'Aula del segundo piso', '00000000-0000-0000-0000-000000000000'),
+  ('10000000-0000-0000-0000-000000000002', 'Cocina', 'Área de preparación de alimentos', '00000000-0000-0000-0000-000000000000');
 
 -- ========================
 -- Ítems de inventario

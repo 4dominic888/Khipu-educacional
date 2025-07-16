@@ -2,20 +2,31 @@
 create extension if not exists "pgcrypto";
 
 -- ================================
+-- TABLAS DE PERIODOS GENERAL
+-- ================================
+create table public.period_time (
+  id uuid primary key default gen_random_uuid(),
+  name text not null unique,
+  description text,
+);
+
+-- ================================
 -- TABLAS
 -- ================================
 
 -- Catálogo
 create table public.catalog_item (
   id text not null primary key,
-  name text not null
+  name text not null unique
 );
 
 -- Grupo de Inventario
 create table public.inventory_group (
   id uuid primary key default gen_random_uuid(),
   name text not null,
-  description text
+  description text,
+  period uuid not null references public.period_time(id) on delete cascade,
+  unique (name, period)
 );
 
 -- Item de Inventario
@@ -29,25 +40,25 @@ create table public.inventory_item (
 -- Adquisición
 create table public.acquisition (
   id uuid primary key default gen_random_uuid(),
-  type text check (type in ('Recibo', 'Boleta', 'Donación')) not null,
-  number text not null,
+  type text not null check (type in ('Recibo', 'Boleta', 'Donación')),
+  number text not null check (char_length(number) > 0),
   date date not null,
-  price numeric(12,2) not null
+  price numeric(12, 2) not null check (price >= 0)
 );
 
 -- Variante del Item
 create table public.variant_inventory_item (
   id uuid primary key default gen_random_uuid(),
   inventory_item_id uuid not null references public.inventory_item(id) on delete cascade,
-  color text not null,
-  length numeric(6,3) not null,
-  width numeric(6,3) not null,
-  height numeric(6,3) not null,
+  color text not null check (char_length(color) > 0),
+  length numeric(6,3) not null check (length >= 0),
+  width numeric(6,3) not null check (width >= 0),
+  height numeric(6,3) not null check (height >= 0),
   serial_number text,
   brand text,
   model text,
   caracteristic text,
-  conservation_status text check (conservation_status in ('Bueno', 'Regular', 'Malo')) not null,
+  conservation_status text not null check (conservation_status in ('Bueno', 'Regular', 'Malo')),
   acquisition_id uuid not null references public.acquisition(id) on delete cascade,
   notes text,
   images text[],

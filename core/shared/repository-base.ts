@@ -179,6 +179,15 @@ export interface RepositoryDuplicable {
   duplicate(id: string): Promise<Result<string, string>>;
 }
 
+/**
+ * Tipo de repositorio para recuperar el número de registros.
+ * 
+ * Provee un método `count()` para recuperar el número de registros.
+ */
+export interface RepositoryCountable {
+  count(): Promise<Result<number, string>>;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**

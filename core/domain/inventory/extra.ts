@@ -1,8 +1,9 @@
 import { RequireAtLeastOne } from "@/core/shared";
 import { InventoryGroup, InventoryItem, VariantInventoryItem } from "@/core/domain";
 
-export type InventoryGroupEditable = RequireAtLeastOne<Partial<Omit<InventoryGroup, "id" |"items">>>;
+export type InventoryGroupEditable = RequireAtLeastOne<Partial<Omit<InventoryGroup,"items">>> & { id : string};
 export type InventoryGroupInfo = Omit<InventoryGroup, "items"> & { count: number };
+export type InventoryGroupToAdd = Omit<InventoryGroup, "id" | "items" | "update_at"> & { period: string };
 
 export type InventoryItemSummary = Pick<InventoryItem, "id" | "total" | "catalogItem">;
 export type InventoryItemToAdd = Omit<InventoryItem, "id" | "total" | "update_at"> & { groupId: string };

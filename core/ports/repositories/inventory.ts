@@ -4,6 +4,7 @@ import {
     InventoryGroup,
     InventoryGroupEditable,
     InventoryGroupInfo,
+    InventoryGroupToAdd,
     InventoryItem,
     InventoryItemEditable,
     InventoryItemToAdd,
@@ -14,6 +15,7 @@ import {
 
 import {
     RepositoryAddAllable,
+    RepositoryCountable,
     RepositoryDuplicable,
     RepositoryFull,
     RepositoryGetAllSummary,
@@ -30,12 +32,10 @@ export interface CatalogItemRepository extends
     RepositoryFull<CatalogItem, CatalogItem, CatalogItem>,
     RepositoryAddAllable<CatalogItem>,
     RepositoryRemovableAllable,
-    RepositoryRemovableEverythingable
+    RepositoryRemovableEverythingable,
+    RepositoryCountable
 {
-    /**
-     * Recupera la cantidad de productos del catálogo.
-     */
-    count(): Promise<Result<number, string>>;
+
 }
 
 /**
@@ -44,11 +44,12 @@ export interface CatalogItemRepository extends
  * Solo se encarga de un CRUD sencillo sin más. Pero solo acerca de la información del grupo, pero no de los items que contiene.
  */
 export interface InventoryGroupRepository extends
-    Omit<RepositoryFull<InventoryGroup, InventoryGroupInfo, InventoryGroupEditable>, "update">,
+    Omit<RepositoryFull<InventoryGroup, InventoryGroupToAdd, InventoryGroupEditable>, "update">,
     RepositoryGetAllSummary<InventoryGroup, InventoryGroupInfo>,
     RepositoryRemovableAllable,
     RepositoryRemovableEverythingable,
-    RepositoryDuplicable
+    RepositoryDuplicable,
+    RepositoryCountable
 {
     /**
      * Actualiza la información de un grupo de inventario.

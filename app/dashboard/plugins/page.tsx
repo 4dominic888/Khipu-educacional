@@ -22,7 +22,7 @@ import {
   CheckCircle,
   AlertCircle,
 } from "lucide-react"
-import { pluginService, type Plugin } from "@/lib/plugin-system"
+import { pluginService, type Plugin } from "@/core/domain/plugin/main"
 
 const iconMap = {
   UserCheck,

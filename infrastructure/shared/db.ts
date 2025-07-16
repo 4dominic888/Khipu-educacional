@@ -1,6 +1,6 @@
-import { Pool, PoolClient } from 'pg';
+import { Pool, PoolClient, QueryResultRow } from 'pg';
 import dotenv from 'dotenv';
-import { Filter, FilterOperator, Pagination, QueryParams, SortOrder } from '@/types/helpers';
+import { failure, Filter, FilterOperator, Pagination, QueryParams, Result, SortOrder, success } from '@/core/shared';
 
 dotenv.config({ quiet: true });
 
@@ -76,10 +76,44 @@ export async function withTransaction<T>(fn: (client: PoolClient) => Promise<T>)
  * @param req 
  * @returns 
  */
-export function getTransactionMethod(req: Request): (fn: (client: PoolClient) => Promise<unknown>) => Promise<unknown> {
+export function executeTransationInApi(req: Request): (fn: (client: PoolClient) => Promise<unknown>) => Promise<unknown> {
   const { searchParams } = new URL(req.url);
   const isTest = searchParams.get('test') === 'true';
   return isTest ? withTestTransaction : withTransaction;
+}
+
+type RunQueryParams = {
+  db: Pool | PoolClient,
+  query: string,
+  params: unknown[],
+  errorMessage: string
+}
+
+/**
+ * Ejecuta una consulta SQL con manejo de errores y respuesta tipada.
+ * 
+ * @template T Tipo del dato esperado en la respuesta.
+ * @param db Conexión a la base de datos (`Pool` o `PoolClient`).
+ * @param query SQL parametrizado.
+ * @param params Parámetros del SQL.
+ * @param errorMessage Mensaje personalizado para devolver en caso de error o fallo.
+ * @returns Resultado de tipo `Result<T, string>` conteniendo el primer registro, o un mensaje de error.
+ */
+export async function runQuery<T extends QueryResultRow>(
+  {db, query, params, errorMessage} : RunQueryParams
+): Promise<Result<T, string>> {
+  try {
+    const { rows, rowCount } = await db.query<T>(query, params);
+
+    if (!rowCount || rows.length === 0) {
+      return failure(errorMessage);
+    }
+
+    return success(rows[0]);
+  } catch (error) {
+    console.error(error);
+    return failure(errorMessage);
+  }
 }
 
 type QueryParamsToSqlParams<T> = {

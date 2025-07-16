@@ -247,7 +247,7 @@ export function buildWhere<T>(filter?: Filter<T>): { sql: string; values: any[] 
  * - `sql`: string de la consulta SQL.
  * - `values`: array de valores a pasar como parámetros en una consulta `pg.query(sql, values)`.
  */
-export function SelectQueryParamsToSql<T>({ query, selectFields, tableName } : QueryParamsToSqlParams<T>) : { sql: string, values: T[] } {
+export function selectQueryParamsToSql<T>({ query, selectFields, tableName } : QueryParamsToSqlParams<T>) : { sql: string, values: T[] } {
   const where = buildWhere(query.filter);
   const order = buildOrder(query.sort);
   const pagination = buildPagination(query.pagination);
@@ -260,4 +260,83 @@ export function SelectQueryParamsToSql<T>({ query, selectFields, tableName } : Q
   ;
 
   return { sql: sqlQuery, values: where.values };
+}
+
+/**
+ * Función auxiliar para verificar si un valor es primitivo.
+ * @param value Valor a verificar.
+ * @returns `true` si el valor es primitivo, `false` en caso contrario.
+ */
+function isPrimitive(value: any): boolean {
+  return (
+    typeof value === 'string' ||
+    typeof value === 'number' ||
+    typeof value === 'boolean' ||
+    value === null ||
+    value instanceof Date
+  );
+}
+
+/**
+ * Ejecuta una consulta SQL de actualización de registros. Útil para poder actualizar solo algunos campos de un registro.
+ * Esto en caso que el dato a colocar tenga valores opcionales.
+ * 
+ * @template T Tipo del objeto con los datos a actualizar, debe tener una ID como dato obligatorio.
+ * @template U Tipo del objeto con los datos actualizados, por lo general el tipo de dato que devuelve la consulta SQL.
+ * 
+ * db: Conexión a la base de datos (`Pool` o `PoolClient`).
+ * 
+ * tableName: Nombre de la tabla a actualizar.
+ * 
+ * keyField: Nombre del campo que identifica el registro a actualizar.
+ * 
+ * data: Objeto con los datos a actualizar.
+ * 
+ * errorMessage: Mensaje personalizado para devolver en caso de error o fallo.
+ * 
+ * @returns Resultado de tipo `Result<T, string>` conteniendo el registro actualizado, o un mensaje de error.
+ */
+export async function runUpdateQuery<T extends Record<string, any>, U extends QueryResultRow>(
+  {db, tableName, keyField, data, errorMessage} : { db: Pool | PoolClient, tableName: string, keyField: keyof T, data: T, errorMessage: string }
+): Promise<Result<U, string>> {
+
+  try {
+    const keyValue = data[keyField];
+
+    if (keyValue === undefined || keyValue === null) {
+      failure(`El campo clave '${String(keyField)}' es obligatorio y no puede ser null o undefined.`);
+    }
+
+    const setClauses: string[] = [];
+    const values: any[] = [];
+    let index = 1;
+
+    for (const [k, v] of Object.entries(data)) {
+      if (k === String(keyField) || v === undefined || !isPrimitive(v)) continue;
+
+      setClauses.push(`${k} = $${index}`);
+      values.push(v);
+      index++;
+    }
+
+    if (setClauses.length === 0) return failure('No hay datos a actualizar');
+
+    values.push(keyValue);
+    const whereClause = `${String(keyField)} = $${values.length}`;
+
+    const query = `
+      UPDATE ${tableName}
+      SET ${setClauses.join(', ')}
+      WHERE ${whereClause}
+      RETURNING *;
+    `;
+
+    const { rows } = await db.query<U>(query, values);
+    return success(rows[0]);
+  }
+  catch (error) {
+    console.error(error);
+    return failure(errorMessage);
+  }
+
 }

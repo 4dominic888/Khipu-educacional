@@ -1,5 +1,5 @@
 import { QueryParams } from '@/types/helpers';
-import { CatalogItem } from '@/types/khipu/inventory.types';
+import { CatalogItem } from '@/core/domain/inventory/main';
 import axios from 'axios';
 
 describe('Inventory API', () => {

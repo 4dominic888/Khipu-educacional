@@ -1,9 +1,9 @@
-import { getTransactionMethod } from "@/lib/db";
-import { RepositorySimpleWithAddAll } from "@/lib/interfaces/repository";
+import { executeTransationInApi } from "@/infrastructure/shared/db";
+import { RepositorySimpleWithAddAll } from "@/core/shared/repository-base";
 import { CatalogInventoryRepository } from "@/lib/repositories/inventory";
 import { rawToQueryParams } from "@/lib/utils";
 import { Result } from "@/types/helpers";
-import { CatalogItem } from "@/types/khipu/inventory.types";
+import { CatalogItem } from "@/core/domain/inventory/main";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -12,7 +12,7 @@ export async function GET(req: Request) {
         const raw = searchParams.get('queryParams');
         const queryParams = rawToQueryParams<CatalogItem>(raw);
 
-        return await getTransactionMethod(req)(async (client) => {
+        return await executeTransationInApi(req)(async (client) => {
             const repo : RepositorySimpleWithAddAll<CatalogItem> = new CatalogInventoryRepository(client);
             const result = await repo.getAll(queryParams);
             if(result.length === 0) return NextResponse.json({ error: 'No se encontraron elementos' }, { status: 404 });
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
 
     let result : Result<any, string> | undefined;
     try {
-        getTransactionMethod(req)(async (client) => {
+        executeTransationInApi(req)(async (client) => {
             const repo : RepositorySimpleWithAddAll<CatalogItem> = new CatalogInventoryRepository(client);
             
             if(catalogItems.length === 1) result = await repo.add(catalogItems[0]);

@@ -1,5 +1,5 @@
-import { InventoryItem, InventoryItemEditable, InventoryItemSummary } from "@/types/khipu/inventory.types";
-import { RepositoryFull } from "../../interfaces/repository";
+import { InventoryItem, InventoryItemEditable, InventoryItemSummary } from "@/core/domain/inventory/main";
+import { RepositoryFull } from "../../../core/shared/repository-base";
 import { Result, QueryParams } from "@/types/helpers";
 import { Pool, PoolClient } from "pg";
 

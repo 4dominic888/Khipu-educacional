@@ -1,6 +1,6 @@
-import { withTestTransaction } from "@/lib/db";
+import { withTestTransaction } from "@/infrastructure/shared/db";
 import { CatalogInventoryRepository, GroupInventoryRepository, InventoryRepository } from "@/lib/repositories/inventory";
-import { CatalogItem, InventoryGroup, InventoryGroupEditable, InventoryGroupInfo } from "@/types/khipu/inventory.types";
+import { CatalogItem, InventoryGroup, InventoryGroupEditable, InventoryGroupInfo } from "@/core/domain/inventory/main";
 
 describe('inventory logic integration test', () => {
     it('should add a catalog item', async () => {

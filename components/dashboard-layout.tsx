@@ -49,7 +49,7 @@ import {
   DollarSign,
   Folder,
 } from "lucide-react"
-import { pluginService, type Plugin } from "@/lib/plugin-system"
+import { pluginService, type Plugin } from "@/core/domain/plugin/main"
 
 interface DashboardLayoutProps {
   children: React.ReactNode

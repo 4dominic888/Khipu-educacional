@@ -17,7 +17,7 @@ supabase start
 ```
 
 >[!NOTE]
-> Las URLs y claves de Supabase se generarán automáticamente al ejecutar el comando anterior, crea un archivo dentro de la carpeta `supabase` llamado `.env` con la siguiente estructura:
+> Las URLs y claves de Supabase se generarán automáticamente al ejecutar el comando anterior, crea un archivo en la raiz del proyecto llamado `.env` con la siguiente estructura:
 
 ```bash
 API_URL=http://x.x.x.x:54321
@@ -26,6 +26,7 @@ S3_STORAGE_URL=http://x.x.x.x:54321/storage/v1/s3
 DB_URL=postgresql://postgres:postgres@x.x.x.x:54322/postgres
 STUDIO_URL=http://x.x.x.x:54323
 INBUCKET_URL=http://x.x.x.x:54324
+NEXT_API_URL=http://localhost:3000 # Esto no esta en las claves generadas por Supabase
 
 JWT_SECRET=super-secret-jwt-token-with-at-least-32-characters-long
 ANON_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -44,14 +45,9 @@ La interfaz de Supabase se accede en la URL llamada STUDIO_URL.
 supabase db reset
 ```
 
-- Migrar la base de datos:
+- Crear una migración vacia:
 ```bash
-supabase db migrate
-```
-
-- Migrar la base de datos y crear un nuevo esquema:
-```bash
-supabase db migrate --create-db
+supabase migration new NAME
 ```
 
 - Generar tipado de los modelos de la BD para typescript:

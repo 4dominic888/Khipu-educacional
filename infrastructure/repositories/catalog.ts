@@ -1,122 +1,101 @@
 import { CatalogItem } from "@/core/domain";
 import { CatalogItemRepository } from "@/core/ports/repositories/inventory";
 import { Result, QueryParams, success, failure } from "@/core/shared";
-import { PostgresRepositoryBase } from "@/infrastructure/shared/extra";
-import { Pool, PoolClient } from "pg";
-import * as pgdbu from "@/infrastructure/shared/db";
+import { supabaseClient as spc } from "../shared/supabase-client";
+import { buildQueryFromParams } from "../shared/supabase-extra";
 
-export class PostgresCatalogItemRepository implements CatalogItemRepository, PostgresRepositoryBase {
-
-    constructor(readonly db: Pool | PoolClient) {};
+export class PostgresCatalogItemRepository implements CatalogItemRepository {
 
     async count(): Promise<Result<number, string>> {
-        try {
-            const { rows } = await this.db.query('SELECT COUNT(*) FROM catalog_item');
-            return success(parseInt(rows[0].count ?? '0'));
-        }
-        catch (error) {
+        const { count, error } = await spc.from('catalog_item').select('*', { count: 'exact', head: true });
+        if (error) {
             console.log(error);
-            return failure('Ocurrió un error inesperado');
+            return failure(error.message);
         }
+        if(!count) return failure('Ha ocurrido un error inesperado');
+        return success(count);
     }
 
     async add(data: CatalogItem): Promise<Result<CatalogItem, string>> {
-        return pgdbu.runQuery<CatalogItem>({
-            db: this.db,
-            query: 'INSERT INTO catalog_item (id, name) VALUES ($1, $2) RETURNING *',
-            params: [data.id, data.name],
-            errorMessage: 'No se ha agregado el catalogo'
-        });
+        const { data: catalogItem, error } = await spc.from('catalog_item').insert(data).select().single();
+        if (error) {
+            console.log(error);
+            return failure(error.message);
+        }
+        return success(catalogItem);
     }
 
     async update(data: CatalogItem): Promise<Result<CatalogItem, string>> {
-        return pgdbu.runQuery<CatalogItem>({
-            db: this.db,
-            query: 'UPDATE catalog_item SET id = $1, name = $2 WHERE id = $3 RETURNING *',
-            params: [data.id, data.name, data.id],
-            errorMessage: 'No se ha actualizado este elemento del catalogo'
-        });
+        const { data: catalogItem, error } = await spc.from('catalog_item').update(data).eq('id', data.id).select().single();
+        if (error) {
+            console.log(error);
+            return failure(error.message);
+        }
+        return success(catalogItem);
     }
 
     async remove(id: string): Promise<Result<string, string>> {
-        const result = await pgdbu.runQuery<CatalogItem>({
-            db: this.db,
-            query: 'DELETE FROM catalog_item WHERE id = $1 RETURNING *',
-            params: [id],
-            errorMessage: 'No se ha eliminado el elemento del catalogo'
-        });
-
-        return result.ok ? success(result.value.id, 'Eliminación exitosa') : failure('No se ha eliminado el elemento del catalogo');
+        const { data, error } = await spc.from('catalog_item').delete().eq('id', id).select().single();
+        if (error) {
+            console.log(error);
+            return failure(error.message);
+        }
+        return success(data.id);
     }
 
     async get(id: string): Promise<CatalogItem | null> {
-        const result = await pgdbu.runQuery<CatalogItem>({
-            db: this.db,
-            query: 'SELECT * FROM catalog_item WHERE id = $1',
-            params: [id],
-            errorMessage: 'No se ha encontrado el elemento'
-        });
-
-        return result.value;
+        const { data, error } = await spc.from('catalog_item').select().eq('id', id).single();
+        if (error) {
+            console.log(error);
+        }        
+        return error ? null : data;
     }
     
     async getAll(query?: QueryParams<CatalogItem> | undefined): Promise<CatalogItem[]> {
-        const { sql, values } = pgdbu.selectQueryParamsToSql<CatalogItem>({
-            query: query ?? {
+        const supabaseQuery = spc.from('catalog_item').select('*', { count: 'exact' });
+        
+        const structuredQuery = buildQueryFromParams<CatalogItem>(
+            supabaseQuery,
+            query ?? {
                 sort: [{ field: 'name', direction: 'asc' }],
                 pagination: { page: 1, pageSize: 20 }
             },
-            selectFields: 'id, name',
-            tableName: 'catalog_item'
-        });
-
-        const { rows } = await this.db.query<CatalogItem>(sql, values);
-        return rows;
+        );
+        const { data, error } = await structuredQuery;
+        if (error) {
+            console.log(error);
+            return [];
+        }
+        return data;
     }
 
     async addAll(data: CatalogItem[]): Promise<Result<number, string>> {
-        if (data.length === 0) return failure('No hay datos a agregar');
-        const values: string[] = [];
-        const placeholders: string[] = [];
-
-        data.forEach(({ id, name }, i) => {
-            const idx = i * 2;
-            placeholders.push(`($${idx + 1}, $${idx + 2})`);
-            values.push(id, name);
-        });
-
-        const query = `INSERT INTO catalog_item (id, name) VALUES ${placeholders.join(', ')}`;
-
-        try {
-            const { rowCount } = await this.db.query(query, values);
-            return success(rowCount ?? 0);
-        } catch (error) {
+        const { count, error } = await spc.from('catalog_item').insert(data).select();
+        if (error) {
             console.log(error);
-            return failure('Ocurrió un error inesperado');
+            return failure(error.message);
         }
+        if(!count) return failure('Ha ocurrido un error inesperado');
+        return success(count);
     }
 
     async removeAll(ids: string[]): Promise<Result<number, string>> {
-        try {
-            const placeholders = ids.map((_, i) => `$${i + 1}`).join(', ');
-            const query = `DELETE FROM catalog_item WHERE id IN (${placeholders})`;
-            const { rowCount } = await this.db.query(query, ids);
-            return success(rowCount ?? 0, "Eliminación exitosa");
-        }
-        catch (error) {
+        const { count, error } = await spc.from('catalog_item').delete().in('id', ids);
+        if (error) {
             console.log(error);
-            return failure('Ocurrió un error inesperado');
+            return failure(error.message);
         }
+        if(!count) return failure('Ha ocurrido un error inesperado');
+        return success(count);
     }
 
     async removeEverything(): Promise<Result<number, string>> {
-        try {
-            const { rowCount } = await this.db.query('DELETE FROM catalog_item');
-            return success(rowCount ?? 0, "Eliminación exitosa");
-        }
-        catch (error) {
+        const { count, error } = await spc.from('catalog_item').delete();
+        if (error) {
             console.log(error);
-            return failure('Ocurrió un error inesperado');
+            return failure(error.message);
         }
+        if(!count) return failure('Ha ocurrido un error inesperado');
+        return success(count);
     }
 }

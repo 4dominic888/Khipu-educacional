@@ -16,12 +16,15 @@ add column if not exists updated_at timestamp with time zone default now();
 -- ================================
 
 create or replace function public.set_updated_at()
-returns trigger as $$
+returns trigger
+language plpgsql
+set search_path = public
+as $$
 begin
   new.updated_at := now();
   return new;
 end;
-$$ language plpgsql;
+$$;
 
 create trigger trg_set_updated_at_inventory_item
 before update on public.inventory_item
@@ -52,7 +55,10 @@ create table if not exists public.variant_inventory_item_audit (
 );
 
 create or replace function public.audit_variant_item()
-returns trigger as $$
+returns trigger
+language plpgsql
+set search_path = public
+as $$
 begin
   insert into public.variant_inventory_item_audit (
     variant_id, operation, old_data, new_data
@@ -65,7 +71,8 @@ begin
   );
   return new;
 end;
-$$ language plpgsql;
+$$;
+
 
 create trigger trg_audit_variant_inventory_item
 after insert or update on public.variant_inventory_item
@@ -106,19 +113,19 @@ for each row
 execute function public.update_inventory_total();
 
 -- ================================
--- Procedure: registrar adquisición con items
+-- Funcion: registrar adquisición con items
 -- ================================
 
-create or replace procedure public.register_acquisition_with_items(
+create or replace function public.register_acquisition_with_items(
   in_acquisition_id uuid,
   in_inventory_items jsonb
 )
+returns void
 language plpgsql
 as $$
 declare
   item jsonb;
 begin
-  -- Insertar ítems asociados a una adquisición
   for item in select * from jsonb_array_elements(in_inventory_items)
   loop
     insert into public.inventory_item (
@@ -132,7 +139,6 @@ begin
       (item->>'catalog_item_id')::text,
       (item->>'total')::int
     );
-    -- Aquí puedes extender para insertar variantes si lo deseas
   end loop;
 end;
 $$;

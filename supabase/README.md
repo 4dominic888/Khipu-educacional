@@ -49,3 +49,8 @@ supabase db reset
 ```bash
 supabase migration new NAME
 ```
+
+- Generar tipado de los modelos de la BD para typescript:
+```bash
+supabase gen types typescript --local > infrastructure/shared/supabase.types.ts
+```

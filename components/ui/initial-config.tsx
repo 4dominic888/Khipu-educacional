@@ -1,10 +1,7 @@
 "use client"
 
 import { School } from 'lucide-react'
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState } from 'react'
 import { useRouter } from "next/navigation"
@@ -68,8 +65,9 @@ const InitialConfig = () => {
                     <div className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="name">Nombre de la Institución *</Label>
-                                <Input
+                                <label htmlFor="name">Nombre de la Institución *</label>
+                                <input
+                                    className='k-text-input'
                                     id="name"
                                     placeholder="Ej: I.E. San Martín de Porres"
                                     value={institution.name || ""}
@@ -77,8 +75,9 @@ const InitialConfig = () => {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="phone">Teléfono</Label>
-                                <Input
+                                <label htmlFor="phone">Teléfono</label>
+                                <input
+                                    className='k-text-input'
                                     id="phone"
                                     placeholder="Ej: 01-234-5678"
                                     value={institution.phone || ""}
@@ -88,8 +87,8 @@ const InitialConfig = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="address">Dirección</Label>
-                            <Textarea
+                            <label htmlFor="address">Dirección</label>
+                            <textarea
                                 id="address"
                                 placeholder="Dirección completa de la institución"
                                 value={institution.address || ""}
@@ -98,8 +97,9 @@ const InitialConfig = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="email">Correo Electrónico</Label>
-                            <Input
+                            <label htmlFor="email">Correo Electrónico</label>
+                            <input
+                                className='k-text-input'
                                 id="email"
                                 type="email"
                                 placeholder="contacto@institucion.edu.pe"
@@ -107,10 +107,13 @@ const InitialConfig = () => {
                                 onChange={(e) => setInstitution({ ...institution, email: e.target.value })}
                             />
                         </div>
-
-                        <Button onClick={() => setStep(2)} className="w-full" disabled={!institution.name}>
+                        <button
+                            className="w-full btn-normal"
+                            disabled={!institution.name}
+                            onClick={() => setStep(2)}
+                        >
                             Continuar
-                        </Button>
+                        </button>
                     </div>
                 )}
 
@@ -118,8 +121,9 @@ const InitialConfig = () => {
                     <div className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="director">Nombre del Director *</Label>
-                                <Input
+                                <label htmlFor="director">Nombre del Director *</label>
+                                <input
+                                    className='k-text-input'
                                     id="director"
                                     placeholder="Nombre completo"
                                     value={institution.director || ""}
@@ -127,8 +131,9 @@ const InitialConfig = () => {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="directorDni">DNI del Director *</Label>
-                                <Input
+                                <label htmlFor="directorDni">DNI del Director *</label>
+                                <input
+                                    className='k-text-input'
                                     id="directorDni"
                                     placeholder="12345678"
                                     maxLength={8}
@@ -141,45 +146,31 @@ const InitialConfig = () => {
                         </div>
 
                         <div className="space-y-3">
-                            <Label>Modo de Acceso al Sistema *</Label>
-                            <RadioGroup
-                                value={institution.accessMode}
-                                onValueChange={(value: "credentialed" | "free") =>
-                                    setInstitution({ ...institution, accessMode: value })
-                                }
-                            >
-                                <div className="flex items-center space-x-2 p-3 border rounded-lg">
-                                    <RadioGroupItem value="credentialed" id="credentialed" />
-                                    <div className="flex-1">
-                                        <Label htmlFor="credentialed" className="font-medium">
-                                            Acceso con Credenciales
-                                        </Label>
-                                        <p className="text-sm text-gray-600">Los usuarios deben ingresar nombre, DNI y contraseña</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center space-x-2 p-3 border rounded-lg">
-                                    <RadioGroupItem value="free" id="free" />
-                                    <div className="flex-1">
-                                        <Label htmlFor="free" className="font-medium">
-                                            Acceso Libre
-                                        </Label>
-                                        <p className="text-sm text-gray-600">Los usuarios solo seleccionan su nombre de usuario</p>
-                                    </div>
-                                </div>
+                            <label>Modo de Acceso al Sistema *</label>
+                            <RadioGroup defaultValue="credentialed">
+                                <RadioGroupItem
+                                    value="credentialed"
+                                    id="credentialed"
+                                    label="Acceso con Credenciales"
+                                    description="Los usuarios deben ingresar nombre, DNI y contraseña"
+                                />
+                                <RadioGroupItem
+                                    value="free"
+                                    id="free"
+                                    label="Acceso Anónimo"
+                                    description="Los usuarios acceden sin identificación"
+                                />
                             </RadioGroup>
                         </div>
 
                         <div className="flex gap-2">
-                            <Button variant="outline" onClick={() => setStep(1)} className="flex-1">
-                                Atrás
-                            </Button>
-                            <Button
+                            <button className='btn-outline flex-1' onClick={() => setStep(1)}>Atrás</button>
+                            <button className='btn-normal flex-1'
                                 onClick={handleSubmit}
-                                className="flex-1"
                                 disabled={!institution.director || !institution.directorDni || institution.directorDni.length !== 8}
                             >
                                 Finalizar Configuración
-                            </Button>
+                            </button>
                         </div>
                     </div>
                 )}

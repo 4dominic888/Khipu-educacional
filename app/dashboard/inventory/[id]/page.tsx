@@ -98,7 +98,6 @@ export default function ItemDetailPage() {
   const variantDescription = inventoryService.getVariantDescription(item)
 
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -412,6 +411,5 @@ export default function ItemDetailPage() {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
   )
 }

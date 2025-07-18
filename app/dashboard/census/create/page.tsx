@@ -118,7 +118,6 @@ export default function CreateCensusPage() {
   }
 
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -626,6 +625,5 @@ export default function CreateCensusPage() {
           </div>
         </form>
       </div>
-    </DashboardLayout>
   )
 }

@@ -88,7 +88,6 @@ export default function PluginsPage() {
   const categories = [...new Set(plugins.map((p) => p.category))]
 
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -245,6 +244,5 @@ export default function PluginsPage() {
           </Card>
         )}
       </div>
-    </DashboardLayout>
   )
 }

@@ -200,7 +200,6 @@ export default function AuditPage() {
   const modules = [...new Set(auditLogs.map((log) => log.module))]
 
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -374,6 +373,5 @@ export default function AuditPage() {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
   )
 }

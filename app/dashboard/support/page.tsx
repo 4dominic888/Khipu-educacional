@@ -198,7 +198,6 @@ export default function SupportPage() {
   }
 
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -447,6 +446,5 @@ export default function SupportPage() {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
   )
 }

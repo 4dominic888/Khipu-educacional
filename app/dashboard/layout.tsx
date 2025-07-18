@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import './globals.css'
+import '../globals.css'
+import SidebarKiphu from '@/components/sidebar-khipu'
 
 export const metadata: Metadata = {
   title: 'v0 App',
@@ -15,8 +16,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
+        <SidebarKiphu children={children}/>
         </body>
     </html>
   )
 }
+
+

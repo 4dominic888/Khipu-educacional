@@ -112,13 +112,13 @@ export default function AddInventoryPage() {
   const handleInputChange = (field: string, value: any) => {
     if (field.includes(".")) {
       const [parent, child] = field.split(".")
-      setFormData((prev) => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent as keyof FormData],
-          [child]: value,
-        },
-      }))
+      // setFormData((prev) => ({
+      //   ...prev,
+      //   [parent]: {
+      //     ...prev[parent as keyof FormData],
+      //     [child]: value,
+      //   },
+      // }))
     } else {
       setFormData((prev) => ({ ...prev, [field]: value }))
     }
@@ -185,11 +185,11 @@ export default function AddInventoryPage() {
     }
 
     try {
-      if (isEditing && editingItem) {
-        inventoryService.updateItem(editingItem.id, formData)
-      } else {
-        inventoryService.addItem(formData)
-      }
+      // if (isEditing && editingItem) {
+      //   inventoryService.updateItem(editingItem.id, formData)
+      // } else {
+      //   inventoryService.addItem(formData)
+      // }
       router.push("/dashboard/inventory")
     } catch (error) {
       console.error("Error saving item:", error)
@@ -216,7 +216,6 @@ export default function AddInventoryPage() {
   }
 
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -648,6 +647,5 @@ export default function AddInventoryPage() {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
   )
 }

@@ -137,7 +137,7 @@ export default function InventoryPage() {
   const totalValue = filteredItems.reduce((sum, item) => sum + inventoryService.getItemTotals(item).totalValue, 0)
 
   return (
-    <DashboardLayout>
+
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -594,6 +594,5 @@ export default function InventoryPage() {
           </Card>
         )}
       </div>
-    </DashboardLayout>
   )
 }

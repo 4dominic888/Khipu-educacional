@@ -8,7 +8,6 @@ import { HardDrive, Users, Shield, ImageIcon } from "lucide-react"
 
 export default function FilesPage() {
   return (
-    <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -125,6 +124,5 @@ export default function FilesPage() {
         {/* File Explorer */}
         <FileExplorer />
       </div>
-    </DashboardLayout>
   )
 }

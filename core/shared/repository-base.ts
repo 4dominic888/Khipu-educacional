@@ -1,4 +1,3 @@
-import { Pool, PoolClient } from "pg";
 import { Result } from "./result";
 import { QueryParams } from "./filter";
 

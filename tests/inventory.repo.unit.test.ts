@@ -1,23 +1,25 @@
 import { describe, expect, it } from 'vitest'
-import { CatalogItem } from "@/core/domain";
-import { CatalogItemRepository } from "@/core/ports/repositories/inventory";
 import { PostgresCatalogItemRepository } from "@/infrastructure/repositories/catalog";
-import * as dotenv from 'dotenv';
+import { CatalogItem } from '@/core/domain';
 
 describe('catalog logic unit test', () => {
-    // it('should add a catalog item', async () => {
-    //     await withTestTransaction(async (client) => {
-    //         const catalogItemRepository = new CatalogInventoryRepository(client);
-    //         const catalogItem : CatalogItem = {
-    //             id: '15454',
-    //             name: 'PUERTA DE ADOBE'
-    //         }
+    it('should add a catalog item', async () => {
+        const catalogItemRepository = new PostgresCatalogItemRepository();
 
-    //         const result = await catalogItemRepository.add(catalogItem);
-    //         expect(result.ok).toBe(true);
-    //         expect(result.value).toStrictEqual(catalogItem);
-    //     });
-    // });
+        const catalogItemToAdd : CatalogItem = {
+            id: '15456844',
+            name: 'MESA OVALADAA'
+        };
+        const result = await catalogItemRepository.add(catalogItemToAdd);
+
+        expect(result.ok).toBe(true);
+        expect(result.value).toStrictEqual(catalogItemToAdd);
+    });
+
+    beforeAll(async () => {
+        const catalogItemRepository = new PostgresCatalogItemRepository();
+        await catalogItemRepository.remove('15456844');
+    });
 
     // it('should add an amount of catalog items', async () => {
     //     await withTestTransaction(async (client) => {
@@ -44,7 +46,7 @@ describe('catalog logic unit test', () => {
     // });
 
     it('should get a catalog item', async () => {
-        const catalogItemRepository : CatalogItemRepository = new PostgresCatalogItemRepository();
+        const catalogItemRepository= new PostgresCatalogItemRepository();
         const expectedCatalogItem : CatalogItem = {
             id: '32220013',
             name: 'SILLA'
@@ -54,6 +56,10 @@ describe('catalog logic unit test', () => {
         expect(result).toBeDefined();
         expect(result!.id).toBe(expectedCatalogItem.id);
         expect(result!.name).toBe(expectedCatalogItem.name);
+
+        const badResult = await catalogItemRepository.get('465456465465465');
+
+        expect(badResult).toBeNull();
     });
 
     // it('should get all catalog items', async () => {
@@ -91,20 +97,22 @@ describe('catalog logic unit test', () => {
     //     });
     // });
 
-    // it('should update a catalog item', async () => {
-    //     await withTestTransaction(async (client) => {
-    //         const catalogItemRepository = new CatalogInventoryRepository(client);
-    //         const expectedCatalogItem : CatalogItem = {
-    //             id: '00000000-0000-0000-0000-000000000001',
-    //             name: 'Muebles'
-    //         }
+    it('should update a catalog item', async () => {
+        const catalogItemRepository = new PostgresCatalogItemRepository();
+        const expectedCatalogItem : CatalogItem = {
+            id: '32220013',
+            name: 'MUEBLES'
+        }
 
-    //         const result = await catalogItemRepository.update(expectedCatalogItem);
-    //         expect(result.ok).toBe(true);
-    //         expect(result.value).toStrictEqual(expectedCatalogItem);
-    //         expect(result.value.name).toBe('Muebles');
-    //     });
-    // });
+        const result = await catalogItemRepository.update(expectedCatalogItem);
+        expect(result.ok).toBe(true);
+        expect(result.value).toStrictEqual(expectedCatalogItem);
+
+        await catalogItemRepository.update({
+            id: '32220013',
+            name: 'SILLA'
+        });
+    });
 
     // it('should remove a catalog item', async () => {
     //     await withTestTransaction(async (client) => {

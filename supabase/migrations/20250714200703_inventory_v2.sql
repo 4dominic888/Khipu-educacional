@@ -16,14 +16,14 @@ add column if not exists updated_at timestamp with time zone default now();
 -- ================================
 
 create or replace function public.set_updated_at()
-returns trigger
-language plpgsql
-set search_path = public
+  returns trigger
+  language plpgsql
+  set search_path = ''
 as $$
 begin
   new.updated_at := now();
   return new;
-end;
+end
 $$;
 
 create trigger trg_set_updated_at_inventory_item
@@ -55,9 +55,9 @@ create table if not exists public.variant_inventory_item_audit (
 );
 
 create or replace function public.audit_variant_item()
-returns trigger
-language plpgsql
-set search_path = public
+  returns trigger
+  language plpgsql
+  set search_path = ''
 as $$
 begin
   insert into public.variant_inventory_item_audit (
@@ -70,7 +70,7 @@ begin
     to_jsonb(new)
   );
   return new;
-end;
+end
 $$;
 
 
@@ -84,7 +84,10 @@ execute function public.audit_variant_item();
 -- ================================
 
 create or replace function public.update_inventory_total()
-returns trigger as $$
+  returns trigger
+  language plpgsql
+  set search_path = ''
+as $$
 begin
   update public.inventory_item
   set total = (
@@ -94,8 +97,8 @@ begin
   )
   where id = new.inventory_item_id;
   return new;
-end;
-$$ language plpgsql;
+end
+$$;
 
 create trigger trg_update_total_after_insert
 after insert on public.variant_inventory_item
@@ -120,8 +123,9 @@ create or replace function public.register_acquisition_with_items(
   in_acquisition_id uuid,
   in_inventory_items jsonb
 )
-returns void
-language plpgsql
+  returns void
+  language plpgsql
+  set search_path = ''
 as $$
 declare
   item jsonb;

@@ -2,15 +2,15 @@ import { Result } from "@/core/shared";
 import {
     CatalogItem,
     InventoryGroup,
-    InventoryGroupEditable,
-    InventoryGroupInfo,
-    InventoryGroupToAdd,
+    EditInventoryGroupDto,
+    InventoryGroupInfoDto,
+    CreateInventoryGroupDto,
     InventoryItem,
-    InventoryItemEditable,
-    InventoryItemToAdd,
+    EditInventoryItemDto,
+    CreateInventoryItemDto,
     VariantInventoryItem,
-    VariantInventoryItemEditable,
-    VariantInventoryItemToAdd,
+    EditVariantInventoryItemDto,
+    CreateVariantInventoryItemDto,
 } from "@/core/domain";
 
 import {
@@ -44,8 +44,8 @@ export interface CatalogItemRepository extends
  * Solo se encarga de un CRUD sencillo sin más. Pero solo acerca de la información del grupo, pero no de los items que contiene.
  */
 export interface InventoryGroupRepository extends
-    Omit<RepositoryFull<InventoryGroup, InventoryGroupToAdd, InventoryGroupEditable>, "update">,
-    RepositoryGetAllSummary<InventoryGroup, InventoryGroupInfo>,
+    Omit<RepositoryFull<InventoryGroup, CreateInventoryGroupDto, EditInventoryGroupDto>, "update">,
+    RepositoryGetAllSummary<InventoryGroup, InventoryGroupInfoDto>,
     RepositoryRemovableAllable,
     RepositoryRemovableEverythingable,
     RepositoryDuplicable,
@@ -56,7 +56,7 @@ export interface InventoryGroupRepository extends
      * @param group Información de actualización del grupo de inventario
      * @returns Resultado de la operación, si tuvo éxito, o un mensaje de error si no.
      */
-    updateInformation(group: InventoryGroupEditable): Promise<Result<InventoryGroup, string>>;
+    updateInformation(group: EditInventoryGroupDto): Promise<Result<InventoryGroup, string>>;
 }
 
 /**
@@ -65,7 +65,7 @@ export interface InventoryGroupRepository extends
  * Solo se encarga de un CRUD sencillo sin más. Pero solo acerca de la información del item, pero no de las variaciones de los items que contiene.
  */
 export interface InventoryItemRepository extends 
-    RepositoryFull<InventoryItem, InventoryItemToAdd, InventoryItemEditable>,
+    RepositoryFull<InventoryItem, CreateInventoryItemDto, EditInventoryItemDto>,
     RepositoryDuplicable
 {
     /**
@@ -89,7 +89,7 @@ export interface InventoryItemRepository extends
  * Solo se encarga de un CRUD sencillo sin más.
  */
 export interface VariantInventoryItemRepository extends
-    RepositoryFull<VariantInventoryItem, VariantInventoryItemToAdd, VariantInventoryItemEditable>,
+    RepositoryFull<VariantInventoryItem, CreateVariantInventoryItemDto, EditVariantInventoryItemDto>,
     RepositoryDuplicable
 {
 

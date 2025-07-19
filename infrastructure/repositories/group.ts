@@ -1,4 +1,4 @@
-import { InventoryGroup, InventoryGroupEditable, InventoryGroupInfo, InventoryGroupToAdd } from "@/core/domain";
+import { InventoryGroup, EditInventoryGroupDto, InventoryGroupInfoDto, CreateInventoryGroupDto } from "@/core/domain";
 import { InventoryGroupRepository } from "@/core/ports/repositories/inventory";
 import { Result, QueryParams } from "@/core/shared";
 import { Pool, PoolClient } from "pg";
@@ -19,8 +19,8 @@ export class PostgresInventoryGroupRepository implements InventoryGroupRepositor
         }
     }
 
-    async updateInformation(group: InventoryGroupEditable): Promise<Result<InventoryGroup, string>> {
-        return await pgdbu.runUpdateQuery<InventoryGroupEditable, InventoryGroup>({
+    async updateInformation(group: EditInventoryGroupDto): Promise<Result<InventoryGroup, string>> {
+        return await pgdbu.runUpdateQuery<EditInventoryGroupDto, InventoryGroup>({
             db: this.db,
             tableName: 'inventory_group',
             keyField: 'id',
@@ -29,7 +29,7 @@ export class PostgresInventoryGroupRepository implements InventoryGroupRepositor
         });
     }
 
-    async add(data: InventoryGroupToAdd): Promise<Result<InventoryGroup, string>> {
+    async add(data: CreateInventoryGroupDto): Promise<Result<InventoryGroup, string>> {
         const result = await pgdbu.runQuery<InventoryGroup>({
             db: this.db,
             query: `INSERT INTO inventory_group (name, description, period) VALUES ($1, $2, $3) RETURNING *`,
@@ -86,7 +86,7 @@ export class PostgresInventoryGroupRepository implements InventoryGroupRepositor
         return rows;
     }
 
-    async getAllSummary(query?: QueryParams<InventoryGroup> | undefined): Promise<InventoryGroupInfo[]> {
+    async getAllSummary(query?: QueryParams<InventoryGroup> | undefined): Promise<InventoryGroupInfoDto[]> {
         const { sql, values } = pgdbu.selectQueryParamsToSql<InventoryGroup>({
             query: query ?? {
                 sort: [{ field: 'name', direction: 'asc' }],
@@ -96,7 +96,7 @@ export class PostgresInventoryGroupRepository implements InventoryGroupRepositor
             tableName: 'inventory_group_info'
         });
 
-        const { rows } = await this.db.query<InventoryGroupInfo>(sql, values);
+        const { rows } = await this.db.query<InventoryGroupInfoDto>(sql, values);
         return rows;
     }
 

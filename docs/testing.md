@@ -29,18 +29,28 @@ import { withTestTransaction } from 'infrastructure/shared'
 import { PostgresInventoryRepository } from 'infrastructure/repositories'
 
 test('should move an item to another group', async () => {
-  const inventoryRepository = new PostgresInventoryRepository();
+  const catalogItemRepository= new PostgresCatalogItemRepository();
+  const expectedCatalogItem : CatalogItem = {
+      id: '32220013',
+      name: 'SILLA'
+  };
+  const result = await catalogItemRepository.get(expectedCatalogItem.id);
 
-  const item = await inventoryRepository.findOneById(1)
-  const newGroupId = 2
+  expect(result).toBeDefined();
+  expect(result!.id).toBe(expectedCatalogItem.id);
+  expect(result!.name).toBe(expectedCatalogItem.name);
 
-  await withTestTransaction(async () => {
-    await inventoryRepository.moveItemToGroup(item.id, newGroupId)
-    const newItem = await inventoryRepository.findOneById(1)
+  const badResult = await catalogItemRepository.get('465456465465465');
 
-    expect(newItem.groupId).toBe(newGroupId)
-  })
+  expect(badResult).toBeNull();
 })
+```
+
+>[!NOTE]
+> Se debe de agregar un beforeAll con el siguiente código para que los logs se autorefrequen cada vez que se ejecute el test y se vea reflejado en la carpeta `.logs`.
+
+```typescript
+beforeAll(async () => await deleteLogs());
 ```
 
 ---

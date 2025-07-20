@@ -5,6 +5,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState } from 'react'
 import { useRouter } from "next/navigation"
+import { ThemeToggle } from '../theme-toggle'
 
 interface Institution {
     id: string

@@ -108,14 +108,36 @@ export default function DashboardPage() {
     },
   ]
 
+    const activity = [
+    {
+      title: "Nuevo item agregado al inventario",
+      value: "Hace 2 horas",
+      icon: Package,
+      color: "text-blue-600",
+    },
+    {
+      title: "Documento generado: Acta de reunión",
+      value: "Hace 1 día",
+      icon: ClipboardList,
+      color: "text-green-600",
+    },
+    {
+      title: "Censo actualizado",
+      value: "Hace 3 días",
+      icon: FileText,
+      color: "text-purple-600",
+    },
+  ]
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Panel de Control</h1>
-          <p className="text-gray-600 mt-1">Bienvenido al sistema de gestión de {institution.name}</p>
+          <h1 className="text-3xl font-bold">Panel de Control</h1>
+          <p className="mt-1">Bienvenido al sistema de gestión de {institution.name}</p>
         </div>
+        {/* change and rearange badge */}
         <Badge variant="outline" className="text-sm">
           Año Académico {currentYear}
         </Badge>
@@ -124,82 +146,55 @@ export default function DashboardPage() {
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {quickStats.map((stat, index) => (
-          <Card key={index}>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">{stat.title}</p>
-                  <p className="text-2xl font-bold">{stat.value}</p>
-                </div>
-                <stat.icon className={`w-8 h-8 ${stat.color}`} />
-              </div>
-            </CardContent>
-          </Card>
+          <div className="flex items-center justify-between p-4 border rounded-lg shadow-sm" key={index}>
+            <div>
+              <p className="text-sm">{stat.title}</p>
+              <p className="text-2xl font-bold">{stat.value}</p>
+            </div>
+            <stat.icon className={`w-8 h-8 ${stat.color}`} />
+          </div>
         ))}
       </div>
 
       {/* Modules Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {modules.map((module) => (
-          <Card key={module.id} className="hover:shadow-lg transition-shadow cursor-pointer">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg ${module.color}`}>
-                  <module.icon className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <CardTitle className="text-lg">{module.title}</CardTitle>
-                </div>
+          <div className="flex p-6 border rounded-lg shadow-sm cursor-pointer flex-col">
+            <div className="flex items-center gap-3 mb-3.5">
+              <div className={`p-2 rounded-lg ${module.color}`}>
+                <module.icon className="w-6 h-6 text-white" />
               </div>
-              <CardDescription className="text-sm">{module.description}</CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-500">{module.stats}</span>
-                <Button size="sm" onClick={() => router.push(module.href)}>
-                  Abrir
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+              <h1 className="text-lg font-semibold leading-none tracking-tight">{module.title}</h1>
+            </div>
+            <p className="text-muted-foreground pb-3">{module.description}</p>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-500">{module.stats}</span>
+              <button className="h-9 rounded-md px-3 bg-white text-black text-sm" onClick={() => router.push(module.href)}>
+                Abrir
+              </button>
+            </div>
+          </div>
         ))}
       </div>
 
       {/* Recent Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <AlertCircle className="w-5 h-5" />
-            Actividad Reciente
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-              <Package className="w-4 h-4 text-blue-600" />
-              <div className="flex-1">
-                <p className="text-sm font-medium">Nuevo item agregado al inventario</p>
-                <p className="text-xs text-gray-500">Hace 2 horas</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-              <FileText className="w-4 h-4 text-green-600" />
-              <div className="flex-1">
-                <p className="text-sm font-medium">Documento generado: Acta de reunión</p>
-                <p className="text-xs text-gray-500">Hace 1 día</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
-              <ClipboardList className="w-4 h-4 text-purple-600" />
-              <div className="flex-1">
-                <p className="text-sm font-medium">Censo actualizado</p>
-                <p className="text-xs text-gray-500">Hace 3 días</p>
-              </div>
+      <div className="flex p-6 border rounded-lg shadow-sm cursor-pointer flex-col">
+        <div className="flex items-center gap-3 mb-3.5">
+          <AlertCircle className="w-5 h-5" />
+          <h1 className="flex items-center gap-2 text-2xl font-semibold leading-none tracking-tight">Actividad reciente</h1>
+        </div>
+        {activity.map((activity) => (
+        <div className="flex p-3 border rounded-lg shadow-sm cursor-pointer flex-col my-1">
+          <div className="flex items-center gap-3">
+            <activity.icon className={`w-6 h-6 p-1 ${activity.color}`} />
+            <div>
+              <h1 className="text-sm font-medium">{activity.title}</h1>
+              <p className="text-xs text-muted-foreground ">{activity.value}</p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+        ))}
+      </div>
     </div>
-
   )
 }

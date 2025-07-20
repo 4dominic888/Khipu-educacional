@@ -52,8 +52,8 @@ const InitialConfig = () => {
     }
 
     return (
-        <div className="shadow-xl rounded-lg border bg-card text-card-foreground">
-            <div className="lex flex-col space-y-1.5 p-6">
+        <div className="card">
+            <div className="flex flex-col space-y-1.5 p-6">
                 <h1 className="flex items-center gap-2 text-2xl font-semibold leading-none tracking-tight">
                     <School className="w-5 h-5" />
                     Configuración Inicial de la Institución

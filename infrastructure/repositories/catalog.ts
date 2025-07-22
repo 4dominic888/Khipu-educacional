@@ -5,7 +5,7 @@ import { supabaseClient as supaClient } from "../shared/supabase-client";
 import { buildQueryFromParams } from "../shared/supabase-extra";
 import { logger, LogMethod } from "../shared/logger";
 
-export class PostgresCatalogItemRepository implements CatalogItemRepository {
+export class PostgreCatalogItemRepository implements CatalogItemRepository {
 
     @LogMethod()
     async count(): Promise<Result<number, string>> {
@@ -44,7 +44,7 @@ export class PostgresCatalogItemRepository implements CatalogItemRepository {
 
     @LogMethod()
     async remove(id: string): Promise<Result<string, string>> {
-        const { data, error } = await supaClient.from('catalog_item').delete().eq('id', id).select().single();
+        const { data, error } = await supaClient.from('catalog_item').delete().eq('id', id).select('id').single();
         if (error) {
             logger.error('Error removing catalog item', error);
             return failure("No se ha podido eliminar el elemento del catálogo");

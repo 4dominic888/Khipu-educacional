@@ -255,33 +255,6 @@ export type Database = {
           },
         ]
       }
-      variant_inventory_item_audit: {
-        Row: {
-          audit_id: string
-          changed_at: string | null
-          new_data: Json | null
-          old_data: Json | null
-          operation: string | null
-          variant_id: string | null
-        }
-        Insert: {
-          audit_id?: string
-          changed_at?: string | null
-          new_data?: Json | null
-          old_data?: Json | null
-          operation?: string | null
-          variant_id?: string | null
-        }
-        Update: {
-          audit_id?: string
-          changed_at?: string | null
-          new_data?: Json | null
-          old_data?: Json | null
-          operation?: string | null
-          variant_id?: string | null
-        }
-        Relationships: []
-      }
     }
     Views: {
       inventory_group_info: {
@@ -290,8 +263,17 @@ export type Database = {
           description: string | null
           id: string | null
           name: string | null
+          period: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "inventory_group_period_fkey"
+            columns: ["period"]
+            isOneToOne: false
+            referencedRelation: "period_time"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       inventory_item_summary: {
         Row: {
@@ -304,8 +286,32 @@ export type Database = {
       }
     }
     Functions: {
-      register_acquisition_with_items: {
-        Args: { in_acquisition_id: string; in_inventory_items: Json }
+      add_variant_with_acquisition: {
+        Args: {
+          _inventory_item_id: string
+          _variant: Database["public"]["CompositeTypes"]["variant_input"]
+          _acquisition: Database["public"]["CompositeTypes"]["acquisition_input"]
+        }
+        Returns: string
+      }
+      delete_variants: {
+        Args: { item_id: string }
+        Returns: undefined
+      }
+      duplicate_group: {
+        Args: { original_group_id: string }
+        Returns: string
+      }
+      duplicate_inventory_item: {
+        Args: { original_item_id: string }
+        Returns: string
+      }
+      update_variant_with_acquisition: {
+        Args: {
+          _inventory_item_id: string
+          _variant: Database["public"]["CompositeTypes"]["variant_input"]
+          _acquisition: Database["public"]["CompositeTypes"]["acquisition_input"]
+        }
         Returns: undefined
       }
     }
@@ -313,7 +319,26 @@ export type Database = {
       [_ in never]: never
     }
     CompositeTypes: {
-      [_ in never]: never
+      acquisition_input: {
+        type: string | null
+        number: string | null
+        date: string | null
+        price: number | null
+      }
+      variant_input: {
+        color: string | null
+        length: number | null
+        width: number | null
+        height: number | null
+        serial_number: string | null
+        brand: string | null
+        model: string | null
+        caracteristic: string | null
+        conservation_status: string | null
+        notes: string | null
+        images: string[] | null
+        count: number | null
+      }
     }
   }
 }

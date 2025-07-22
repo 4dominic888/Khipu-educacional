@@ -1,164 +1,145 @@
-import { InventoryGroup, EditInventoryGroupDto, InventoryGroupInfoDto, CreateInventoryGroupDto } from "@/core/domain";
+import { EditInventoryGroupDto, InventoryGroup, CreateInventoryGroupDto, InventoryGroupInfoDto, InventoryGroupDto, InventoryItem, InventoryItemDto } from "@/core/domain";
 import { InventoryGroupRepository } from "@/core/ports/repositories/inventory";
-import { Result, QueryParams } from "@/core/shared";
-import { Pool, PoolClient } from "pg";
-import * as pgdbu from "@/infrastructure/shared/db";
-import { success, failure } from "@/core/shared";
+import { Result, QueryParams, failure, success } from "@/core/shared";
+import { supabaseClient as supaClient } from "../shared/supabase-client";
+import { logger, LogMethod } from "../shared/logger";
+import { buildQueryFromParams } from "../shared/supabase-extra";
 
-export class PostgresInventoryGroupRepository implements InventoryGroupRepository {
-    constructor(readonly db: Pool | PoolClient) {}
-
-    async count(): Promise<Result<number, string>> {
-        try {
-            const { rows } = await this.db.query('SELECT COUNT(*) FROM inventory_group');
-            return success(parseInt(rows[0].count ?? '0'));
+export class PostgreInventoryGroupRepository implements InventoryGroupRepository {
+    
+    @LogMethod()
+    async updateInformation(group: EditInventoryGroupDto): Promise<Result<InventoryGroupDto, string>> {
+        const { data, error } = await supaClient.from('inventory_group').update(group).eq('id', group.id).select().single();
+        if (error) {
+            logger.error('Error updating inventory group', error);
+            return failure("No se ha podido actualizar el grupo de inventario");
         }
-        catch (error) {
-            console.log(error);
-            return failure('Ocurrió un error inesperado');
-        }
-    }
 
-    async updateInformation(group: EditInventoryGroupDto): Promise<Result<InventoryGroup, string>> {
-        return await pgdbu.runUpdateQuery<EditInventoryGroupDto, InventoryGroup>({
-            db: this.db,
-            tableName: 'inventory_group',
-            keyField: 'id',
-            data: group,
-            errorMessage: 'No se ha actualizado el grupo'
+        return success<InventoryGroupDto>({
+            id: data.id,
+            name: data.name,
+            description: data.description || undefined,
+            period: data.period
         });
     }
 
+    @LogMethod()
     async add(data: CreateInventoryGroupDto): Promise<Result<InventoryGroup, string>> {
-        const result = await pgdbu.runQuery<InventoryGroup>({
-            db: this.db,
-            query: `INSERT INTO inventory_group (name, description, period) VALUES ($1, $2, $3) RETURNING *`,
-            params: [data.name, data.description, data.period],
-            errorMessage: 'No se ha creado correctamente el grupo'
+        const { data: group, error } = await supaClient.from('inventory_group').insert(data).select().single();
+        if (error) {
+            logger.error('Error adding inventory group', error);
+            return failure("No se ha podido añadir el grupo de inventario");
+        }
+        return success({
+            id: group.id,
+            name: group.name,
+            description: group.description || undefined,
+            period: group.period,
+            items: []
         });
-
-        if(!result.ok) return failure(result.error);
-
-        const groupCreated : InventoryGroup = {
-            id: result.value.id,
-            name: result.value.name,
-            description: result.value.description,
-            items: [],
-            period: result.value.period,
-        };
-
-        return success(groupCreated);
     }
 
+    @LogMethod()
     async remove(id: string): Promise<Result<string, string>> {
-        const result = await pgdbu.runQuery({
-            db: this.db,
-            query: 'DELETE FROM inventory_group WHERE id = $1 RETURNING *',
-            params: [id],
-            errorMessage: 'No se ha eliminado correctamente el grupo'
-        });
-
-        return result.ok ? success(result.value.id, 'Eliminación exitosa') : failure(result.error);
+        const { data, error } = await supaClient.from('inventory_group').delete().eq('id', id).select('id').single();
+        if (error) {
+            logger.error('Error removing inventory group', error);
+            return failure("No se ha podido eliminar el grupo de inventario");
+        }
+        return success(data.id);
     }
 
-    async get(id: string): Promise<InventoryGroup | null> {
-        const result = await pgdbu.runQuery<InventoryGroup>({
-            db: this.db,
-            query: 'SELECT * FROM inventory_group WHERE id = $1',
-            params: [id],
-            errorMessage: 'No se ha encontrado el grupo'
-        });
+    @LogMethod()
+    async getInfo(id: string): Promise<InventoryGroupInfoDto | null> {
+        const { data: group, error } = await supaClient.from('inventory_group_info').select('*').eq('id', id).single();
+        if (error) {
+            logger.error('Error getting inventory group', error);
+            return null;
+        }
 
-        return result.value;
+        return {
+            id: group.id!,
+            name: group.name!,
+            description: group.description || undefined,
+            period: group.period!,
+            count: group.count!,
+        }
+
     }
 
-    async getAll(query?: QueryParams<InventoryGroup> | undefined): Promise<InventoryGroup[]> {
-        const { sql, values } = pgdbu.selectQueryParamsToSql<InventoryGroup>({
-            query: query ?? {
-                sort: [{ field: 'name', direction: 'asc' }],
-                pagination: { page: 1, pageSize: 20 }
-            },
-            selectFields: '*',
-            tableName: 'inventory_group'
-        });
-
-        const { rows } = await this.db.query<InventoryGroup>(sql, values);
-        return rows;
-    }
-
+    @LogMethod()
     async getAllSummary(query?: QueryParams<InventoryGroup> | undefined): Promise<InventoryGroupInfoDto[]> {
-        const { sql, values } = pgdbu.selectQueryParamsToSql<InventoryGroup>({
-            query: query ?? {
-                sort: [{ field: 'name', direction: 'asc' }],
-                pagination: { page: 1, pageSize: 20 }
-            },
-            selectFields: '*',
-            tableName: 'inventory_group_info'
-        });
+        const { data, error } = await buildQueryFromParams(supaClient.from('inventory_group_info').select(), query);
+        if (error) {
+            logger.error('Error getting inventory groups', error);
+            return [];
+        }
 
-        const { rows } = await this.db.query<InventoryGroupInfoDto>(sql, values);
-        return rows;
+        return data.map((group: any) : InventoryGroupInfoDto => ({ 
+            id: group.id!,
+            name: group.name!,
+            description: group.description || undefined,
+            period: group.period!,
+            count: group.count!,
+        }));
     }
 
+    @LogMethod()
     async removeAll(ids: string[]): Promise<Result<number, string>> {
-        try {
-            const placeholders = ids.map((_, i) => `$${i + 1}`).join(', ');
-            const query = `DELETE FROM inventory_group WHERE id IN (${placeholders})`;
-            const { rowCount } = await this.db.query(query, ids);
-            return success(rowCount ?? 0, "Eliminación exitosa");
+        const { error, count } = await supaClient.from('inventory_group').delete().in('id', ids);
+        if (error) {
+            logger.error('Error removing inventory groups', error);
+            return failure("No se ha podido eliminar los grupos de inventario");
         }
-        catch (error) {
-            console.log(error);
-            return failure('Ocurrió un error inesperado');
+
+        if(!count) {
+            logger.error('Error removing inventory groups', error);
+            return failure("No se ha eliminado ningún grupo de inventario");
         }
+
+        return success(count);
     }
 
+    @LogMethod()
     async removeEverything(): Promise<Result<number, string>> {
-        try {
-            const { rowCount } = await this.db.query('DELETE FROM inventory_group');
-            return success(rowCount ?? 0, "Eliminación exitosa");
+        const { error, count } = await supaClient.from('inventory_group').delete().select('id').single();
+        if (error) {
+            logger.error('Error removing inventory groups', error);
+            return failure("No se ha podido eliminar los grupos de inventario");
         }
-        catch (error) {
-            console.log(error);
-            return failure('Ocurrió un error inesperado');
+
+        if(!count) {
+            logger.error('Error removing inventory groups', error);
+            return failure("No se ha eliminado ningún grupo de inventario");
         }
+
+        return success(count);
     }
 
+    @LogMethod()
     async duplicate(id: string): Promise<Result<string, string>> {
-        try {
-            //* Obtener el grupo a copiar
-            const group = await this.get(id);
-            if (!group) return failure('No se ha encontrado el grupo');
-
-            //* Buscar algun otro grupo con el mismo nombre, teniendo en cuenta el periodo
-            const foundDuplicates = await this.getAllSummary(
-                {
-                    filter: {
-                        AND: [
-                            { name: { op: 'contains', value: group.name } },
-                            { period: { op: 'eq', value: group.period } }
-                        ]
-                    }
-                }
-            );
-
-            const existingNames = foundDuplicates.map((g) => g.name);
-            let copyNumber = 1;
-
-            while (existingNames.includes(`${group.name} (${copyNumber})`)) copyNumber++;
-            const newName = `${group.name} (${copyNumber})`;
-
-            const result = await this.add({
-                name: newName,
-                description: group.description,
-                period: group.period
-            });
-            
-            return result.ok ? success(result.value.id, 'Duplicación exitosa') : failure(result.error);
+        const { data: newDuplicatedId, error } = await supaClient.rpc('duplicate_group', { original_group_id: id });
+        if (error) {
+            logger.error('Error duplicating inventory group', error);
+            return failure("No se ha podido duplicar el grupo de inventario");
         }
-        catch (error) {
-            console.log(error);
-            return failure('Ocurrió un error inesperado');
-        }
+        return success(newDuplicatedId);
     }
+
+    @LogMethod()
+    async count(): Promise<Result<number, string>> {
+        const { count, error } = await supaClient.from('inventory_group').select('*', { count: 'exact', head: true });
+        if (error) {
+            logger.error('Error getting inventory groups count', error);
+            return failure("No se ha podido obtener el número de grupos de inventario");
+        }
+
+        if(!count) {
+            logger.error('Error getting inventory groups count', count);
+            return failure("No se ha podido obtener el número de grupos de inventario");
+        }
+
+        return success(count);
+    }
+
 }

@@ -31,9 +31,20 @@ El proyecto sigue un flujo de trabajo basado en Git Flow simplificado:
 
 - Supabase CLI instalado globalmente
 
+- Docker
+
 ```bash
 npm install -g supabase
 ```
+
+o si vienes de windows o tienes problemas:
+
+```bash
+scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+scoop install supabase
+```
+
+Para esto es necesario tener instalado [Scoop](https://scoop.sh/).
 
 ## 2. Instalar dependencias
 
@@ -53,6 +64,14 @@ supabase start
 
 Este comando usará la configuración del archivo supabase/config.toml.
 
+>[!NOTE]
+>Si es la primera vez que ejecutas el comando, se empezará a descargar los contenedores de supabase, lo cual puede consumir mucho espacio en disco, alrededor de 10GB.
+
+Una vez no necesites de tener supabase local, puedes ejecutar el comando `supabase stop` para detenerlo, liberará el espacio de memoria.
+
+Y para más información sobre el uso de supabase local, puedes consultar la [documentación oficial](https://supabase.com/docs/guides/cli/local).
+
+
 ## 4. Migraciones y Seeds
 
 Desde la carpeta supabase, para aplicar la estructura de base de datos y datos iniciales:
@@ -60,6 +79,8 @@ Desde la carpeta supabase, para aplicar la estructura de base de datos y datos i
 ```bash
 supabase db reset
 ```
+
+Es importante que revises también la [documentación local](/supabase/README.md), para que facilite el flujo de trabajo o requieras hacer cambios en el backend.
 
 Esto limpia, migra y aplica los seeds definidos.
 

@@ -54,3 +54,8 @@ supabase migration new NAME
 ```bash
 supabase gen types typescript --local > infrastructure/shared/supabase.types.ts
 ```
+
+o mediante npm:
+```bash
+npm run gen-types
+```

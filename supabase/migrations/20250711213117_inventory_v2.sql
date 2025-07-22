@@ -1,5 +1,6 @@
 -- Habilitar extensiones necesarias
 create extension if not exists "pgcrypto";
+create extension if not exists "pgaudit" schema extensions;
 
 -- ================================
 -- TABLAS DE PERIODOS GENERAL
@@ -85,6 +86,7 @@ select
   ig.id,
   ig.name,
   ig.description,
+  ig.period,
   coalesce(sum(ii.total), 0)::int as count
 from public.inventory_group ig
 left join public.inventory_item ii on ii.group_id = ig.id

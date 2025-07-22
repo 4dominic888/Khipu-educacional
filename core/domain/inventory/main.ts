@@ -13,8 +13,11 @@ export interface CatalogItem {
     name: string
 }
 
+export type AcquisitionType = "Recibo" | "Boleta" | "Donación";
+
 export interface Acquisition {
-    type: "Recibo" | "Boleta" | "Donación",
+    id: string,
+    type: AcquisitionType,
     number: string,
     date: string,
     price: number
@@ -28,9 +31,12 @@ export interface InventoryItem {
     update_at?: string
 }
 
+export type ConservationStatus = "Bueno" | "Regular" | "Malo";
+
 export interface VariantInventoryItem {
     id: string
-    color: string
+    color: string,
+    inventory_item_id: string,
     dimensions: { //* Medidas en metros decimales
         length: number
         width: number
@@ -40,7 +46,7 @@ export interface VariantInventoryItem {
     brand?: string
     model?: string
     caracteristic?: string
-    conservationStatus: "Bueno" | "Regular" | "Malo",
+    conservationStatus: ConservationStatus,
     acquisition: Acquisition
     observations?: {
         notes: string

@@ -4,6 +4,7 @@ import { Result, QueryParams, failure, success } from "@/core/shared";
 import { supabaseClient as supaClient } from "../shared/supabase-client";
 import { logger, LogMethod } from "../shared/logger";
 import { buildQueryFromParams } from "../shared/supabase-extra";
+import { postgreDefaultErrorMessage } from "../shared/postgre-error-messages";
 
 export class PostgreInventoryGroupRepository implements InventoryGroupRepository {
     
@@ -12,7 +13,7 @@ export class PostgreInventoryGroupRepository implements InventoryGroupRepository
         const { data, error } = await supaClient.from('inventory_group').update(group).eq('id', group.id).select().single();
         if (error) {
             logger.error('Error updating inventory group', error);
-            return failure("No se ha podido actualizar el grupo de inventario");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
 
         return success<InventoryGroupDto>({
@@ -28,7 +29,7 @@ export class PostgreInventoryGroupRepository implements InventoryGroupRepository
         const { data: group, error } = await supaClient.from('inventory_group').insert(data).select().single();
         if (error) {
             logger.error('Error adding inventory group', error);
-            return failure("No se ha podido añadir el grupo de inventario");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
         return success({
             id: group.id,
@@ -44,7 +45,7 @@ export class PostgreInventoryGroupRepository implements InventoryGroupRepository
         const { data, error } = await supaClient.from('inventory_group').delete().eq('id', id).select('id').single();
         if (error) {
             logger.error('Error removing inventory group', error);
-            return failure("No se ha podido eliminar el grupo de inventario");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
         return success(data.id);
     }
@@ -89,7 +90,7 @@ export class PostgreInventoryGroupRepository implements InventoryGroupRepository
         const { error, count } = await supaClient.from('inventory_group').delete().in('id', ids);
         if (error) {
             logger.error('Error removing inventory groups', error);
-            return failure("No se ha podido eliminar los grupos de inventario");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
 
         if(!count) {
@@ -105,7 +106,7 @@ export class PostgreInventoryGroupRepository implements InventoryGroupRepository
         const { error, count } = await supaClient.from('inventory_group').delete().select('id').single();
         if (error) {
             logger.error('Error removing inventory groups', error);
-            return failure("No se ha podido eliminar los grupos de inventario");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
 
         if(!count) {
@@ -121,7 +122,7 @@ export class PostgreInventoryGroupRepository implements InventoryGroupRepository
         const { data: newDuplicatedId, error } = await supaClient.rpc('duplicate_group', { original_group_id: id });
         if (error) {
             logger.error('Error duplicating inventory group', error);
-            return failure("No se ha podido duplicar el grupo de inventario");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
         return success(newDuplicatedId);
     }
@@ -131,7 +132,7 @@ export class PostgreInventoryGroupRepository implements InventoryGroupRepository
         const { count, error } = await supaClient.from('inventory_group').select('*', { count: 'exact', head: true });
         if (error) {
             logger.error('Error getting inventory groups count', error);
-            return failure("No se ha podido obtener el número de grupos de inventario");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
 
         if(!count) {

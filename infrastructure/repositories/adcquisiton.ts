@@ -1,8 +1,9 @@
 import { CreateAcquisitionDto, Acquisition, EditAcquisitionDto, AcquisitionType } from "@/core/domain";
 import { AdcquisitionRepository as AcquisitionRepository } from "@/core/ports/repositories/inventory";
-import { Result, QueryParams, failure, success } from "@/core/shared";
+import { Result, failure, success } from "@/core/shared";
 import { supabaseClient as supaClient } from "../shared/supabase-client";
 import { logger, LogMethod } from "../shared/logger";
+import { postgreDefaultErrorMessage } from "../shared/postgre-error-messages";
 
 export class PostgreInventoryAcquisitionRepository implements AcquisitionRepository {  
     @LogMethod()
@@ -10,7 +11,7 @@ export class PostgreInventoryAcquisitionRepository implements AcquisitionReposit
         const { data: acquisition, error } = await supaClient.from('acquisition').insert(data).select().single();
         if (error) {
             logger.error('Error adding acquisition', error);
-            return failure("No se ha podido añadir la adquisición");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
         return success({
             id: acquisition.id,
@@ -26,7 +27,7 @@ export class PostgreInventoryAcquisitionRepository implements AcquisitionReposit
         const { data: acquisition, error } = await supaClient.from('acquisition').update(data).eq('id', data.id).select().single();
         if (error) {
             logger.error('Error updating acquisition', error);
-            return failure("No se ha podido actualizar la adquisición");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
         return success({
             id: acquisition.id,
@@ -42,7 +43,7 @@ export class PostgreInventoryAcquisitionRepository implements AcquisitionReposit
         const { data, error } = await supaClient.from('acquisition').delete().eq('id', id).select('id').single();
         if (error) {
             logger.error('Error removing acquisition', error);
-            return failure("No se ha podido eliminar la adquisición");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
         return success(data.id);
     }

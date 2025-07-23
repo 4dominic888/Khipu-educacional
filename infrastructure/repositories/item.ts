@@ -5,6 +5,7 @@ import { supabaseClient as supaClient } from "../shared/supabase-client";
 import { logger, LogMethod } from "../shared/logger";
 import { parseVariantDtoToVariant } from "../shared/parsers";
 import { buildQueryFromParams } from "../shared/supabase-extra";
+import { postgreDefaultErrorMessage } from "../shared/postgre-error-messages";
 
 export class PostgreInventoryItemRepository implements InventoryItemRepository {
     @LogMethod()
@@ -12,7 +13,7 @@ export class PostgreInventoryItemRepository implements InventoryItemRepository {
         const { error } = await supaClient.from('inventory_item').update({ group_id: groupId }).eq('id', itemId);
         if (error) {
             logger.error('Error moving inventory item to group', error);
-            return failure("No se ha podido mover el item de inventario");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
         return success(true);
     }
@@ -22,7 +23,7 @@ export class PostgreInventoryItemRepository implements InventoryItemRepository {
         const { error } = await supaClient.rpc('delete_variants', {item_id: itemId});
         if (error) {
             logger.error('Error deleting inventory item variants', error);
-            return failure("No se ha podido eliminar las variantes del item de inventario");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
 
         return success(true);
@@ -38,7 +39,7 @@ export class PostgreInventoryItemRepository implements InventoryItemRepository {
 
         if (error) {
             logger.error('Error adding inventory item', error);
-            return failure("No se ha podido añadir el item de inventario");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
 
         return success({
@@ -53,7 +54,7 @@ export class PostgreInventoryItemRepository implements InventoryItemRepository {
         const { data: item, error } = await supaClient.from('inventory_item').update(data).eq('id', data.id!).select('*, catalog_item(*)').single();
         if (error) {
             logger.error('Error updating inventory item', error);
-            return failure("No se ha podido actualizar el item de inventario");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
 
         return success({
@@ -69,7 +70,7 @@ export class PostgreInventoryItemRepository implements InventoryItemRepository {
         const { error } = await supaClient.from('inventory_item').delete().eq('id', id);
         if (error) {
             logger.error('Error removing inventory item', error);
-            return failure("No se ha podido eliminar el item de inventario");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
         return success(id);
     }
@@ -157,7 +158,7 @@ export class PostgreInventoryItemRepository implements InventoryItemRepository {
 
         if (error) {
             logger.error('Error duplicating inventory item from duplicate method', error);
-            return failure("No se ha podido obtener el item de inventario para duplicar");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
         return success(duplicatedItemId);
     }

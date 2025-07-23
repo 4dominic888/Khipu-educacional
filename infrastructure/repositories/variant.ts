@@ -5,6 +5,7 @@ import { supabaseClient as supaClient } from "../shared/supabase-client";
 import { logger, LogMethod } from "../shared/logger";
 import { PostgreInventoryAcquisitionRepository } from "./adcquisiton";
 import { parseVariantDtoWithItemToVariant } from "../shared/parsers";
+import { postgreDefaultErrorMessage } from "../shared/postgre-error-messages";
 
 export class PostgreInventoryVariantRepository implements VariantInventoryItemRepository {
 
@@ -38,7 +39,7 @@ export class PostgreInventoryVariantRepository implements VariantInventoryItemRe
 
         if (error) {
             logger.error('Error adding variant', error);
-            return failure("No se ha podido añadir la variante");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
 
         return success(newVariantId);
@@ -72,7 +73,7 @@ export class PostgreInventoryVariantRepository implements VariantInventoryItemRe
 
         if (error) {
             logger.error('Error updating variant', error);
-            return failure("No se ha podido actualizar la variante");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
         return success(true);
     }
@@ -82,7 +83,7 @@ export class PostgreInventoryVariantRepository implements VariantInventoryItemRe
         const { data: variant, error } = await supaClient.from('variant_inventory_item').select('id, acquisition_id').eq('id', id).single();
         if (error) {
             logger.error('Error getting variant to remove from remove method', id);
-            return failure("No se ha podido eliminar la variante");
+            return failure(postgreDefaultErrorMessage(error.code));
         }
 
         const acquisitionRemoveResult = await this.acquisitionRepo.remove(variant.acquisition_id);

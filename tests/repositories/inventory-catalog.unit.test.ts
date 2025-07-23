@@ -22,6 +22,7 @@ describe('get catalog items', () => {
 
         expect(result).toBeDefined();
         expect(result).toStrictEqual(expectedCatalogItem);
+
     });
 
     it('should get all catalog items', async () => {
@@ -66,6 +67,7 @@ describe('get catalog items', () => {
         expect(result.length).toBe(2);
         expect(result.find(item => item.name === 'MESA')).toBeDefined();
         expect(result.find(item => item.name === 'SILLA')).toBeDefined();
+        //expect(result.find(item => item.name === 'PROYECTOR')).toBeDefined();
     });
 });
 
@@ -84,6 +86,8 @@ describe('update catalog items', () => {
             id: '32220013',
             name: 'SILLA'
         });
+
+
     });
 
     it('should not update a non existing catalog item', async () => {

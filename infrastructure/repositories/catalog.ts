@@ -40,6 +40,7 @@ export class PostgreCatalogItemRepository implements CatalogItemRepository {
         const { data: catalogItem, error } = await supaClient.from('catalog_item').update(data).eq('id', data.id).select().single();
         if (error) {
             logger.error('Error updating catalog item', error);
+            if(error.code === 'PGRST116') return failure("El elemento del catálogo no existe, no se puede actualizar");
             return failure(postgreDefaultErrorMessage(error.code));
         }
         return success(catalogItem);
@@ -50,6 +51,7 @@ export class PostgreCatalogItemRepository implements CatalogItemRepository {
         const { data, error } = await supaClient.from('catalog_item').delete().eq('id', id).select('id').single();
         if (error) {
             logger.error('Error removing catalog item', error);
+            if(error.code === 'PGRST116') return failure("El elemento del catálogo no existe, no se puede eliminar");
             return failure(postgreDefaultErrorMessage(error.code));
         }
         return success(data.id);
@@ -83,43 +85,39 @@ export class PostgreCatalogItemRepository implements CatalogItemRepository {
 
     @LogMethod()
     async addAll(data: CatalogItem[]): Promise<Result<number, string>> {
-        const { count, error } = await supaClient.from('catalog_item').insert(data).select();
+        const { data: catalogItemsAdded, error } = await supaClient.from('catalog_item').insert(data).select('*');
         if (error) {
             logger.error('Error adding many catalog items', error);
             return failure(postgreDefaultErrorMessage(error.code));
         }
-        if(!count) {
-            logger.error('the quantity of items added is not defined and could be null', { countValue: count });
-            return failure("No se han podido añadir los elementos al catálogo");
-        }
-        return success(count);
+        return success(catalogItemsAdded.length);
     }
 
     @LogMethod()
     async removeAll(ids: string[]): Promise<Result<number, string>> {
-        const { count, error } = await supaClient.from('catalog_item').delete().in('id', ids);
+        const { data, error } = await supaClient.from('catalog_item').delete({ count: 'exact' }).in('id', ids).select('id');
         if (error) {
             logger.error('Error removing many catalog items', error);
             return failure(postgreDefaultErrorMessage(error.code));
         }
-        if(!count) {
-            logger.error('the quantity of items removed is not defined and could be null', { countValue: count });
+        if(!data.length) {
+            logger.error('the quantity of items removed is not defined and could be null', { countValue: data.length });
             return failure("No se han podido eliminar los elementos del catálogo");
         }
-        return success(count);
+        return success(data.length);
     }
 
     @LogMethod()
     async removeEverything(): Promise<Result<number, string>> {
-        const { count, error } = await supaClient.from('catalog_item').delete();
+        const { data, error } = await supaClient.from('catalog_item').delete().neq("id", '').select('id');
         if (error) {
             logger.error('Error removing all catalog items', error);
             return failure(postgreDefaultErrorMessage(error.code));
         }
-        if(!count) {
-            logger.error('the quantity of items removed is not defined and could be null', { countValue: count });
+        if(!data.length) {
+            logger.error('the quantity of items removed is not defined and could be null', { countValue: data.length });
             return failure("No se han podido eliminar todos los elementos del catálogo");
         }
-        return success(count);
+        return success(data.length);
     }
 }

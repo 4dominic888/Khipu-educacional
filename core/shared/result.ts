@@ -28,11 +28,16 @@ class Failure<E> {
     }
 }
 
-// Helpers
+//* Helpers
 export function success<T>(value: T, message?: string): Result<T, never> {
     return new Success(value, message);
 }
 
 export function failure<E>(error: E, message?: string): Result<never, E> {
     return new Failure(error, message);
+}
+
+export function asFailure<E>(result: Result<unknown, E>): Failure<E> {
+    if(result.ok) throw new Error('The result is not a failure');
+    return result as Failure<E>;
 }

@@ -61,6 +61,7 @@ describe('PostgreInventoryAcquisitionRepository', () => {
         if (result.ok) {
             await repo.add({
                 // id: '30000000-0000-0000-0000-000000000001',
+                //! PROVIDE ID IF NECESSARY
                 type: "Recibo",
                 number: 'R-001',
                 date: '2024-01-10',

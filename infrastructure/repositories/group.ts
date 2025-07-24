@@ -10,7 +10,15 @@ export class PostgreInventoryGroupRepository implements InventoryGroupRepository
     
     @LogMethod()
     async updateInformation(group: EditInventoryGroupDto): Promise<Result<InventoryGroupDto, string>> {
-        const { data, error } = await supaClient.from('inventory_group').update(group).eq('id', group.id).select().single();
+        const { data: groupEdited, error } = await supaClient.rpc('edit_group', {
+            inventory_group_id_to_edit: group.id,
+            group_value: {
+                name: group.name || null,
+                description: group.description || null,
+                period: group.period || null
+            }
+        });
+
         if (error) {
             logger.error('Error updating inventory group', error);
             if(error.code === 'PGRST116') return failure("No se ha podido actualizar el elemento");
@@ -18,10 +26,10 @@ export class PostgreInventoryGroupRepository implements InventoryGroupRepository
         }
 
         return success<InventoryGroupDto>({
-            id: data.id,
-            name: data.name,
-            description: data.description || undefined,
-            period: data.period
+            id: groupEdited.id,
+            name: groupEdited.name,
+            description: groupEdited.description || undefined,
+            period: groupEdited.period
         });
     }
 

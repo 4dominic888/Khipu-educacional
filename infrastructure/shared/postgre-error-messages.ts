@@ -10,7 +10,7 @@ export function postgreDefaultErrorMessage(error?: PostgrestError, defaultMessag
   if (startsWith('28')) return 'Permisos insuficientes para realizar esta acción.';
   if (startsWith('3D')) return 'Error en la configuración de la base de datos. Contacta con soporte técnico.';
   if (startsWith('53')) return 'El servicio de base de datos está saturado. Intenta más tarde.';
-  if (code === '500') return error.message;
+  if (code === 'P0001') return error.message;
   if (code === '57P01') return 'El servicio de base de datos fue detenido temporalmente.';
   if (code === '08006') return 'La conexión con el servidor se perdió. Intenta nuevamente.';
 

@@ -235,7 +235,7 @@ export type Database = {
           {
             foreignKeyName: "variant_inventory_item_acquisition_id_fkey"
             columns: ["acquisition_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "acquisition"
             referencedColumns: ["id"]
           },
@@ -288,9 +288,9 @@ export type Database = {
     Functions: {
       add_variant_with_acquisition: {
         Args: {
-          _inventory_item_id: string
           _variant: Database["public"]["CompositeTypes"]["variant_input"]
           _acquisition: Database["public"]["CompositeTypes"]["acquisition_input"]
+          _inventory_item_id: string
         }
         Returns: string
       }
@@ -306,11 +306,24 @@ export type Database = {
         Args: { original_item_id: string }
         Returns: string
       }
+      edit_group: {
+        Args: {
+          inventory_group_id_to_edit: string
+          group_value: Database["public"]["CompositeTypes"]["group_input"]
+        }
+        Returns: {
+          description: string | null
+          id: string
+          name: string
+          period: string
+          updated_at: string | null
+        }
+      }
       update_variant_with_acquisition: {
         Args: {
+          _acquisition: Database["public"]["CompositeTypes"]["acquisition_input"]
           _inventory_item_id: string
           _variant: Database["public"]["CompositeTypes"]["variant_input"]
-          _acquisition: Database["public"]["CompositeTypes"]["acquisition_input"]
         }
         Returns: undefined
       }
@@ -324,6 +337,11 @@ export type Database = {
         number: string | null
         date: string | null
         price: number | null
+      }
+      group_input: {
+        name: string | null
+        description: string | null
+        period: string | null
       }
       variant_input: {
         color: string | null

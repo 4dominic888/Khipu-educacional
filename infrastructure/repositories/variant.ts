@@ -36,7 +36,7 @@ export class PostgreInventoryVariantRepository implements VariantInventoryItemRe
 
         if (error) {
             logger.error('Error adding variant', error);
-            return failure(postgreDefaultErrorMessage(error.code));
+            return failure(postgreDefaultErrorMessage(error));
         }
 
         return success(newVariantId);
@@ -70,7 +70,7 @@ export class PostgreInventoryVariantRepository implements VariantInventoryItemRe
 
         if (error) {
             logger.error('Error updating variant', error);
-            return failure(postgreDefaultErrorMessage(error.code));
+            return failure(postgreDefaultErrorMessage(error));
         }
         return success(true);
     }
@@ -80,14 +80,14 @@ export class PostgreInventoryVariantRepository implements VariantInventoryItemRe
         const { data: variant, error: getVariantError } = await supaClient.from('variant_inventory_item').select('id, acquisition_id').eq('id', id).single();
         if (getVariantError) {
             logger.error('Error getting variant to remove from remove method', getVariantError);
-            return failure(postgreDefaultErrorMessage(getVariantError.code));
+            return failure(postgreDefaultErrorMessage(getVariantError));
         }
 
         const { error: deleteAcquisitionError } = await supaClient.from('acquisition').delete().eq('id', variant.acquisition_id); 
 
         if (deleteAcquisitionError) {
             logger.error('Error removing acquisition for variant to remove from remove method', deleteAcquisitionError);
-            return failure(postgreDefaultErrorMessage(deleteAcquisitionError.code));
+            return failure(postgreDefaultErrorMessage(deleteAcquisitionError));
         }
 
         return success(variant.id);

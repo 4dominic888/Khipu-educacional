@@ -13,7 +13,7 @@ export class PostgreCatalogItemRepository implements CatalogItemRepository {
         const { count, error } = await supaClient.from('catalog_item').select('*', { count: 'exact', head: true });
         if (error) {
             logger.error('Error counting catalog items', error);
-            return failure(postgreDefaultErrorMessage(error.code));
+            return failure(postgreDefaultErrorMessage(error));
         }
         if(!count) {
             logger.error('count is not defined and could be null', { countValue: count });
@@ -29,7 +29,7 @@ export class PostgreCatalogItemRepository implements CatalogItemRepository {
             logger.error('Error adding catalog item', error);
 
             if(error.code === '23505') return failure("No se puede usar el mismo id o nombre de un elemento del catálogo");
-            return failure(postgreDefaultErrorMessage(error.code));
+            return failure(postgreDefaultErrorMessage(error));
         }
         return success(catalogItem);
     }
@@ -41,7 +41,7 @@ export class PostgreCatalogItemRepository implements CatalogItemRepository {
         if (error) {
             logger.error('Error updating catalog item', error);
             if(error.code === 'PGRST116') return failure("El elemento del catálogo no existe, no se puede actualizar");
-            return failure(postgreDefaultErrorMessage(error.code));
+            return failure(postgreDefaultErrorMessage(error));
         }
         return success(catalogItem);
     }
@@ -52,7 +52,7 @@ export class PostgreCatalogItemRepository implements CatalogItemRepository {
         if (error) {
             logger.error('Error removing catalog item', error);
             if(error.code === 'PGRST116') return failure("El elemento del catálogo no existe, no se puede eliminar");
-            return failure(postgreDefaultErrorMessage(error.code));
+            return failure(postgreDefaultErrorMessage(error));
         }
         return success(data.id);
     }
@@ -88,7 +88,7 @@ export class PostgreCatalogItemRepository implements CatalogItemRepository {
         const { data: catalogItemsAdded, error } = await supaClient.from('catalog_item').insert(data).select('*');
         if (error) {
             logger.error('Error adding many catalog items', error);
-            return failure(postgreDefaultErrorMessage(error.code));
+            return failure(postgreDefaultErrorMessage(error));
         }
         return success(catalogItemsAdded.length);
     }
@@ -98,7 +98,7 @@ export class PostgreCatalogItemRepository implements CatalogItemRepository {
         const { data, error } = await supaClient.from('catalog_item').delete({ count: 'exact' }).in('id', ids).select('id');
         if (error) {
             logger.error('Error removing many catalog items', error);
-            return failure(postgreDefaultErrorMessage(error.code));
+            return failure(postgreDefaultErrorMessage(error));
         }
         if(!data.length) {
             logger.error('the quantity of items removed is not defined and could be null', { countValue: data.length });
@@ -112,7 +112,7 @@ export class PostgreCatalogItemRepository implements CatalogItemRepository {
         const { data, error } = await supaClient.from('catalog_item').delete().neq("id", '').select('id');
         if (error) {
             logger.error('Error removing all catalog items', error);
-            return failure(postgreDefaultErrorMessage(error.code));
+            return failure(postgreDefaultErrorMessage(error));
         }
         if(!data.length) {
             logger.error('the quantity of items removed is not defined and could be null', { countValue: data.length });

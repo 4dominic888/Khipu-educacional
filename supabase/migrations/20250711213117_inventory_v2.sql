@@ -60,7 +60,7 @@ create table public.variant_inventory_item (
   model text,
   caracteristic text,
   conservation_status text not null check (conservation_status in ('Bueno', 'Regular', 'Malo')),
-  acquisition_id uuid not null references public.acquisition(id) on delete cascade,
+  acquisition_id uuid unique not null references public.acquisition(id) on delete cascade,
   notes text,
   images text[],
   count integer not null check (count > 0)

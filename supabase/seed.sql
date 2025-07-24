@@ -43,10 +43,10 @@ insert into public.variant_inventory_item (
   serial_number, brand, model, caracteristic, conservation_status,
   acquisition_id, notes, images, count
 ) values
-  (gen_random_uuid(), '20000000-0000-0000-0000-000000000001', 'Negro', 0.45, 0.45, 0.90, 'SN-0001', 'MarcaX', 'SillaModA', 'Plástico con metal', 'Bueno', '30000000-0000-0000-0000-000000000001', 'En buenas condiciones', ARRAY['/images/silla1.jpg'], 5),
-  (gen_random_uuid(), '20000000-0000-0000-0000-000000000001', 'Azul', 0.45, 0.45, 0.90, 'SN-0002', 'MarcaY', 'SillaModB', 'Plástico reforzado', 'Regular', '30000000-0000-0000-0000-000000000001', null, ARRAY['/images/silla2.jpg'], 5),
+  ('40000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', 'Negro', 0.45, 0.45, 0.90, 'SN-0001', 'MarcaX', 'SillaModA', 'Plástico con metal', 'Bueno', '30000000-0000-0000-0000-000000000001', 'En buenas condiciones', ARRAY['/images/silla1.jpg'], 5),
+  ('40000000-0000-0000-0000-000000000002', '20000000-0000-0000-0000-000000000001', 'Azul', 0.45, 0.45, 0.90, 'SN-0002', 'MarcaY', 'SillaModB', 'Plástico reforzado', 'Regular', '30000000-0000-0000-0000-000000000001', null, ARRAY['/images/silla2.jpg'], 5),
 
-  (gen_random_uuid(), '20000000-0000-0000-0000-000000000002', 'Madera', 1.2, 0.6, 0.75, null, 'Artesanos SRL', null, 'De 4 patas', 'Bueno', '30000000-0000-0000-0000-000000000002', 'Mesa sólida', ARRAY[]::text[], 5),
+  ('40000000-0000-0000-0000-000000000003', '20000000-0000-0000-0000-000000000002', 'Madera', 1.2, 0.6, 0.75, null, 'Artesanos SRL', null, 'De 4 patas', 'Bueno', '30000000-0000-0000-0000-000000000002', 'Mesa sólida', ARRAY[]::text[], 5),
 
-  (gen_random_uuid(), '20000000-0000-0000-0000-000000000003', 'Blanco', 0.3, 0.25, 0.1, 'PRJ-0001', 'BenQ', 'W1090', 'HDMI, VGA', 'Bueno', '30000000-0000-0000-0000-000000000003', 'Proyector con HDMI', ARRAY['/images/proyector1.jpg'], 1),
-  (gen_random_uuid(), '20000000-0000-0000-0000-000000000003', 'Negro', 0.3, 0.25, 0.1, 'PRJ-0002', 'Epson', 'EB-S41', 'HD Ready', 'Malo', '30000000-0000-0000-0000-000000000003', 'Lámpara quemada', ARRAY['/images/proyector2.jpg'], 1);
+  ('40000000-0000-0000-0000-000000000004', '20000000-0000-0000-0000-000000000003', 'Blanco', 0.3, 0.25, 0.1, 'PRJ-0001', 'BenQ', 'W1090', 'HDMI, VGA', 'Bueno', '30000000-0000-0000-0000-000000000003', 'Proyector con HDMI', ARRAY['/images/proyector1.jpg'], 1),
+  ('40000000-0000-0000-0000-000000000005', '20000000-0000-0000-0000-000000000003', 'Negro', 0.3, 0.25, 0.1, 'PRJ-0002', 'Epson', 'EB-S41', 'HD Ready', 'Malo', '30000000-0000-0000-0000-000000000003', 'Lámpara quemada', ARRAY['/images/proyector2.jpg'], 1);

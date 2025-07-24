@@ -1,15 +1,12 @@
 import { CreateVariantInventoryItemDto, VariantInventoryItem, EditVariantInventoryItemDto } from "@/core/domain";
-import { AdcquisitionRepository, VariantInventoryItemRepository } from "@/core/ports/repositories/inventory";
+import { VariantInventoryItemRepository } from "@/core/ports/repositories/inventory";
 import { Result, failure, success } from "@/core/shared";
 import { supabaseClient as supaClient } from "../shared/supabase-client";
 import { logger, LogMethod } from "../shared/logger";
-import { PostgreInventoryAcquisitionRepository } from "./adcquisiton";
 import { parseVariantDtoWithItemToVariant } from "../shared/parsers";
 import { postgreDefaultErrorMessage } from "../shared/postgre-error-messages";
 
 export class PostgreInventoryVariantRepository implements VariantInventoryItemRepository {
-
-    private readonly acquisitionRepo: AdcquisitionRepository = new PostgreInventoryAcquisitionRepository();
 
     @LogMethod()
     async add(data: CreateVariantInventoryItemDto): Promise<Result<string, string>> {
@@ -80,16 +77,17 @@ export class PostgreInventoryVariantRepository implements VariantInventoryItemRe
 
     @LogMethod()
     async remove(id: string): Promise<Result<string, string>> {
-        const { data: variant, error } = await supaClient.from('variant_inventory_item').select('id, acquisition_id').eq('id', id).single();
-        if (error) {
-            logger.error('Error getting variant to remove from remove method', id);
-            return failure(postgreDefaultErrorMessage(error.code));
+        const { data: variant, error: getVariantError } = await supaClient.from('variant_inventory_item').select('id, acquisition_id').eq('id', id).single();
+        if (getVariantError) {
+            logger.error('Error getting variant to remove from remove method', getVariantError);
+            return failure(postgreDefaultErrorMessage(getVariantError.code));
         }
 
-        const acquisitionRemoveResult = await this.acquisitionRepo.remove(variant.acquisition_id);
-        if (!acquisitionRemoveResult.ok) {
-            logger.error('Error removing acquisition for variant to remove from remove method', acquisitionRemoveResult.error);
-            return acquisitionRemoveResult;
+        const { error: deleteAcquisitionError } = await supaClient.from('acquisition').delete().eq('id', variant.acquisition_id); 
+
+        if (deleteAcquisitionError) {
+            logger.error('Error removing acquisition for variant to remove from remove method', deleteAcquisitionError);
+            return failure(postgreDefaultErrorMessage(deleteAcquisitionError.code));
         }
 
         return success(variant.id);

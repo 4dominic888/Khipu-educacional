@@ -148,9 +148,3 @@ export interface VariantInventoryItemRepository extends
      */
     getAllByInventoryItemId(inventoryItemId: string): Promise<VariantInventoryItem[]>;
 }
-
-export interface AdcquisitionRepository extends
-    Omit<RepositoryFull<Acquisition, CreateAcquisitionDto, EditAcquisitionDto>, "getAll">
-{
-
-}

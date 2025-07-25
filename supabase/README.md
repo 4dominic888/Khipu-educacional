@@ -40,7 +40,7 @@ La interfaz de Supabase se accede en la URL llamada STUDIO_URL.
 
 ## 🧪 Comandos útiles
 
-- Resetear la base de datos:
+- Resetear la base de datos en base a los archivos de migración y la seed:
 ```bash
 supabase db reset
 ```
@@ -48,6 +48,11 @@ supabase db reset
 - Crear una migración vacia:
 ```bash
 supabase migration new NAME
+```
+
+- Crea una migración en base al schema en la carpeta `schemas`, cabe aclarar que se usa una convención para los nombres basado en cual se debe ejecutar primero y despues, ademas de tenerlos ordenados en `supabase/config.toml`, sin embargo esto no es suficiente por el momento, por lo que en caso exista un error, se debe corregir manualmente en el archivo de migración generado:
+```bash
+supabase db diff -f NAME
 ```
 
 - Generar tipado de los modelos de la BD para typescript:

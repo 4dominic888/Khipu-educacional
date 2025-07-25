@@ -50,7 +50,25 @@ max_client_conn = 100
 enabled = true
 # Specifies an ordered list of schema files that describe your database.
 # Supports glob patterns relative to supabase directory: "./schemas/*.sql"
-schema_paths = []
+schema_paths = [
+    "./schemas/shared/001_extensions.sql",
+    "./schemas/shared/002_tables.sql",
+
+    # * Inventory *
+    "./schemas/inventory/003_tables.sql",
+    "./schemas/inventory/004_views.sql",
+    "./schemas/inventory/005_types.sql",
+
+    "./schemas/inventory/triggers/006_set_update_at.sql",
+    "./schemas/inventory/triggers/007_update_inventory_total.sql",
+
+    "./schemas/inventory/functions/008_add_variant_with_acquisition.sql",
+    "./schemas/inventory/functions/009_delete_variants.sql",
+    "./schemas/inventory/functions/010_duplicate_inventory_item.sql",
+    "./schemas/inventory/functions/011_duplicate_group.sql",
+    "./schemas/inventory/functions/012_update_variant_with_acquisition.sql",
+    "./schemas/inventory/functions/013_edit_group.sql",
+]
 
 [db.seed]
 # If enabled, seeds the database after migrations during a db reset.

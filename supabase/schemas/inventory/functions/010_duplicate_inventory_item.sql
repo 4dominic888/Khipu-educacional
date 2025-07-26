@@ -6,7 +6,16 @@ as $$
 declare
   new_item_id uuid;
   v public.variant_inventory_item%rowtype;
+  existing_item boolean;
 begin
+
+  select exists(
+    select 1 from public.inventory_item where id = original_item_id
+  ) into existing_item;
+
+  if not existing_item then
+    raise exception 'No se ha podido duplicar el item de inventario, no existe';
+  end if;
 
   insert into public.inventory_item (group_id, catalog_item_id, total)
   select group_id, catalog_item_id, total from public.inventory_item where id = original_item_id

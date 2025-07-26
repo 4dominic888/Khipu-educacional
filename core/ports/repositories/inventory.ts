@@ -69,6 +69,13 @@ export interface InventoryGroupRepository extends
      * @returns Información del grupo de inventario
      */
     getInfo(id: string): Promise<InventoryGroupInfoDto | null>
+
+    /**
+     * Inserta un grupo de inventario.
+     * @param id ID del grupo de inventario
+     * @param group Datos del grupo de inventario
+     */
+    insert(id:string, group: CreateInventoryGroupDto): Promise<Result<InventoryGroupDto, string>>;
 }
 
 /**

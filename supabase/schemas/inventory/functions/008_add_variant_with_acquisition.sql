@@ -10,7 +10,16 @@ as $$
 declare
   new_acquisition_id uuid;
   new_variant_id uuid;
+  existing_inventory_item boolean;
 begin
+
+  select exists(
+    select 1 from public.inventory_item where id = _inventory_item_id
+  ) into existing_inventory_item;
+
+  if not existing_inventory_item then
+    raise exception 'No se ha podido agregar la variante, no existe el item';
+  end if;
 
   insert into public.acquisition (type, number, date, price)
   values (_acquisition.type, _acquisition.number, _acquisition.date, _acquisition.price)

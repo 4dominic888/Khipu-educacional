@@ -16,7 +16,6 @@ export class PostgreInventoryVariantRepository implements VariantInventoryItemRe
                 caracteristic: data.caracteristic || null,
                 color: data.color,
                 conservation_status: data.conservationStatus.toString(),
-                count: data.count || 0,
                 width: data.dimensions.width,
                 height: data.dimensions.height,
                 length: data.dimensions.length,
@@ -24,6 +23,7 @@ export class PostgreInventoryVariantRepository implements VariantInventoryItemRe
                 serial_number: data.serialNumber || null,
                 notes: data.observations?.notes || null,
                 images: data.observations?.images || null,
+                count: data.count || null,
             },
             _acquisition: {
                 type: data.acquisition.type,
@@ -51,13 +51,12 @@ export class PostgreInventoryVariantRepository implements VariantInventoryItemRe
                 date: data.acquisition.date || null,
                 price: data.acquisition.price || null,
             },
-            _inventory_item_id: data.inventory_item_id,
+            _variant_inventory_item_id: data.id,
             _variant: {
                 brand: data.brand || null,
                 caracteristic: data.caracteristic || null,
                 color: data.color || null,
                 conservation_status: data.conservationStatus || null,
-                count: data.count || 0,
                 width: data.dimensions?.width || null,
                 height: data.dimensions?.height || null,
                 length: data.dimensions?.length || null,
@@ -65,6 +64,7 @@ export class PostgreInventoryVariantRepository implements VariantInventoryItemRe
                 serial_number: data.serialNumber || null,
                 notes: data.observations?.notes || null,
                 images: data.observations?.images || null,
+                count: data.count || null,
             }
         });
 

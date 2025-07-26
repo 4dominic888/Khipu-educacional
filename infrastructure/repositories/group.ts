@@ -7,6 +7,28 @@ import { buildQueryFromParams } from "../shared/supabase-extra";
 import { postgreDefaultErrorMessage } from "../shared/postgre-error-messages";
 
 export class PostgreInventoryGroupRepository implements InventoryGroupRepository {
+
+    @LogMethod()
+    async insert(id: string, group: CreateInventoryGroupDto): Promise<Result<InventoryGroupDto, string>> {
+        const { data: groupEdited, error } = await supaClient.from('inventory_group').insert({
+            id: id,
+            name: group.name,
+            description: group.description || undefined,
+            period: group.period,
+        }).select().single();
+
+        if (error) {
+            logger.error('Error inserting inventory group', error);
+            return failure(postgreDefaultErrorMessage(error));
+        }
+
+        return success<InventoryGroupDto>({
+            id: groupEdited.id,
+            name: groupEdited.name,
+            description: groupEdited.description || undefined,
+            period: groupEdited.period
+        });
+    }
     
     @LogMethod()
     async updateInformation(group: EditInventoryGroupDto): Promise<Result<InventoryGroupDto, string>> {
@@ -96,34 +118,34 @@ export class PostgreInventoryGroupRepository implements InventoryGroupRepository
 
     @LogMethod()
     async removeAll(ids: string[]): Promise<Result<number, string>> {
-        const { error, count } = await supaClient.from('inventory_group').delete().in('id', ids);
+        const { error, data } = await supaClient.from('inventory_group').delete().in('id', ids).select('id');
         if (error) {
             logger.error('Error removing inventory groups', error);
             return failure(postgreDefaultErrorMessage(error));
         }
 
-        if(!count) {
-            logger.error('Error removing inventory groups', error);
+        if(!data.length) {
+            logger.error('Error removing inventory groups', { countValue: data.length });
             return failure("No se ha eliminado ningún grupo de inventario");
         }
 
-        return success(count);
+        return success(data.length);
     }
 
     @LogMethod()
     async removeEverything(): Promise<Result<number, string>> {
-        const { error, count } = await supaClient.from('inventory_group').delete().select('id').single();
+        const { error, data } = await supaClient.from('inventory_group').delete().neq("name", '').select('id');
         if (error) {
             logger.error('Error removing inventory groups', error);
             return failure(postgreDefaultErrorMessage(error));
         }
 
-        if(!count) {
-            logger.error('Error removing inventory groups', error);
+        if(!data.length) {
+            logger.error('Error removing inventory groups', { countValue: data.length });
             return failure("No se ha eliminado ningún grupo de inventario");
         }
 
-        return success(count);
+        return success(data.length);
     }
 
     @LogMethod()

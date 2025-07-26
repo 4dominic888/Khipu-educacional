@@ -1,7 +1,4 @@
-create or replace function public.edit_group(
-  inventory_group_id_to_edit uuid,
-  group_value public.group_input
-)
+create or replace function public.edit_group(inventory_group_id_to_edit uuid, group_value public.group_input)
   returns inventory_group
   language plpgsql
   set search_path = ''

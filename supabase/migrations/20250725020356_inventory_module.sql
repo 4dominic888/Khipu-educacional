@@ -399,14 +399,37 @@ end
 $function$
 ;
 
-CREATE OR REPLACE FUNCTION public.update_variant_with_acquisition(_inventory_item_id uuid, _variant variant_input, _acquisition acquisition_input)
+CREATE OR REPLACE FUNCTION public.update_variant_with_acquisition(_variant_inventory_item_id uuid, _variant variant_input, _acquisition acquisition_input)
  RETURNS void
  LANGUAGE plpgsql
  SET search_path TO ''
 AS $function$
 declare
   acquisition_id_belonged uuid;
+  existing_variant boolean;
 begin
+
+  select exists(
+    select 1 from public.variant_inventory_item where id = _variant_inventory_item_id
+  ) into existing_variant;
+
+  if not existing_variant then
+    raise exception 'No se ha podido editar la variante, no existe el item';
+  end if;
+
+  select id into acquisition_id_belonged from public.acquisition where id = 
+    (select acquisition_id from public.variant_inventory_item where id = _variant_inventory_item_id);
+
+  if _acquisition is not null then
+    update public.acquisition
+    set
+      type = _acquisition.type,
+      number = _acquisition.number,
+      date = _acquisition.date,
+      price = _acquisition.price
+    where id = acquisition_id_belonged;
+  end if;
+
   update public.variant_inventory_item
   set
     color = coalesce(_variant.color, color),
@@ -418,21 +441,10 @@ begin
     model = coalesce(_variant.model, model),
     caracteristic = coalesce(_variant.caracteristic, caracteristic),
     conservation_status = coalesce(_variant.conservation_status, conservation_status),
+    acquisition_id = acquisition_id_belonged,
     notes = coalesce(_variant.notes, notes),
-    images = coalesce(_variant.images, images),
-    count = coalesce(_variant.count, count)
-  where inventory_item_id = _inventory_item_id
-  returning acquisition_id into acquisition_id_belonged;
-
-  if _acquisition is not null then
-    update public.acquisition
-    set
-      type = _acquisition.type,
-      number = _acquisition.number,
-      date = _acquisition.date,
-      price = _acquisition.price
-    where id = acquisition_id_belonged;
-  end if;
+    images = coalesce(_variant.images, images)
+  where id = _variant_inventory_item_id;
 
 end;
 $function$

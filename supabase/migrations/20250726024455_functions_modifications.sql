@@ -1,8 +1,10 @@
-create or replace function public.duplicate_group(original_group_id uuid)
-  returns uuid
-  language plpgsql
-  set search_path = ''
-as $$
+set check_function_bodies = off;
+
+CREATE OR REPLACE FUNCTION public.duplicate_group(original_group_id uuid)
+ RETURNS uuid
+ LANGUAGE plpgsql
+ SET search_path TO ''
+AS $function$
 declare
   new_group_id uuid;
   v public.inventory_group%rowtype;
@@ -48,4 +50,7 @@ exception
   when others then
     raise exception 'Error duplicating inventory_group %, %, %, %: %', original_group_id, new_group_id, new_name, v, sqlerrm;
 end;
-$$;
+$function$
+;
+
+

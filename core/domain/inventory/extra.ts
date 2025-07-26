@@ -20,8 +20,8 @@ export type InventoryItemDto = {
     }[]
 }
 
-export type EditVariantInventoryItemDto = RequireAtLeastOne<Omit<VariantInventoryItem, "id" | "update_at" | "inventory_item_id" | "acquisition">> & { id: string, inventory_item_id: string, acquisition: EditAcquisitionDto };
-export type CreateVariantInventoryItemDto = Omit<VariantInventoryItem, "id" | "update_at">;
+export type EditVariantInventoryItemDto = RequireAtLeastOne<Omit<VariantInventoryItem, "id" | "update_at" | "acquisition">> & { id: string, acquisition: Omit<EditAcquisitionDto, "id"> };
+export type CreateVariantInventoryItemDto = Omit<VariantInventoryItem, "id" | "update_at" | "acquisition"> & { acquisition: CreateAcquisitionDto };
 export type VariantInventoryItemDto = {
     acquisition_id: string;
     brand: string | null;

@@ -47,9 +47,9 @@ export class PostgreInventoryVariantRepository implements VariantInventoryItemRe
         const { error } = await supaClient.rpc('update_variant_with_acquisition', {
             _acquisition: {
                 type: data.acquisition?.type?.toString() || null,
-                number: data.acquisition.number || null,
-                date: data.acquisition.date || null,
-                price: data.acquisition.price || null,
+                number: data.acquisition?.number || null,
+                date: data.acquisition?.date || null,
+                price: data.acquisition?.price || null,
             },
             _variant_inventory_item_id: data.id,
             _variant: {

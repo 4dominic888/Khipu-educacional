@@ -111,3 +111,144 @@ describe('update inventory groups', () => {
         console.log(asFailure(result).error);
     });
 });
+
+describe('add inventory groups', () => {
+    it('should add an inventory group', async () => {
+        const inventoryGroupToAdd : CreateInventoryGroupDto = {
+            name: 'Aula 600',
+            description: 'Aula del sexto piso',
+            period: '00000000-0000-0000-0000-000000000000'
+        };
+
+        const result = await repo.add(inventoryGroupToAdd);
+        expect(result.ok).toBe(true);
+        expect(result.value.name).toStrictEqual('Aula 600');
+        expect(result.value.description).toStrictEqual('Aula del sexto piso');
+        expect(result.value.period).toStrictEqual('00000000-0000-0000-0000-000000000000');
+
+        if(result.ok) await repo.remove(result.value.id);
+    });
+
+    it('should not add an inventory group with a non existing period id', async () => {
+        const inventoryGroupToAdd : CreateInventoryGroupDto = {
+            name: 'Aula 600',
+            description: 'Aula del sexto piso',
+            period: '12345000-0000-0000-0000-000000000000'
+        };
+
+        const result = await repo.add(inventoryGroupToAdd);
+        expect(result.ok).toBe(false);
+        console.log(asFailure(result).error);
+    });
+
+    it('should insert an inventory group', async () => {
+        const inventoryGroupToAdd : CreateInventoryGroupDto = {
+            name: 'Aula 600',
+            description: 'Aula del sexto piso',
+            period: '00000000-0000-0000-0000-000000000000'
+        };
+
+        const result = await repo.insert('10000000-0000-0000-0000-000000000003', inventoryGroupToAdd);
+        expect(result.ok).toBe(true);
+        expect(result.value.name).toStrictEqual('Aula 600');
+        expect(result.value.description).toStrictEqual('Aula del sexto piso');
+        expect(result.value.period).toStrictEqual('00000000-0000-0000-0000-000000000000');
+
+        if(result.ok) await repo.remove(result.value.id);
+    });
+});
+
+describe('delete inventory groups', () => {
+    it('should delete an inventory group', async () => {
+        const testAddedResult = await repo.add({
+            name: 'Aula 600',
+            description: 'Aula del sexto piso',
+            period: '00000000-0000-0000-0000-000000000000'
+        });
+
+        const result = await repo.remove(testAddedResult.value.id);
+        expect(result.ok).toBe(true);
+        expect(result.value).toBe(testAddedResult.value.id);
+
+        const deletedGroupInfo = await repo.getInfo(testAddedResult.value.id);
+        expect(deletedGroupInfo).toBe(null);
+    });
+
+    it('should not delete a non existing inventory group', async () => {
+        const result = await repo.remove('00000000-0000-0000-0000-000000000000');
+        expect(result.ok).toBe(false);
+        console.log(asFailure(result).error);
+    });
+
+    it('should delete many inventory groups', async () => {
+        const testAddedResult1 = await repo.add({
+            name: 'Aula 600',
+            description: 'Aula del sexto piso',
+            period: '00000000-0000-0000-0000-000000000000'
+        });
+        const testAddedResult2 = await repo.add({
+            name: 'Aula 601',
+            description: 'Aula del sexto piso',
+            period: '00000000-0000-0000-0000-000000000000'
+        });
+
+        const result = await repo.removeAll([testAddedResult1.value.id, testAddedResult2.value.id]);
+        expect(result.ok).toBe(true);
+        expect(result.value).toBe(2);
+
+        const deletedGroupInfo1 = await repo.getInfo(testAddedResult1.value.id);
+        expect(deletedGroupInfo1).toBe(null);
+
+        const deletedGroupInfo2 = await repo.getInfo(testAddedResult2.value.id);
+        expect(deletedGroupInfo2).toBe(null);
+    });
+
+    it('should delete all inventory groups', async () => {
+        const result = await repo.removeEverything();
+        expect(result.ok).toBe(true);
+        expect(result.value).toBe(2);
+
+        if(result.ok) {
+            Promise.all([
+                repo.insert('10000000-0000-0000-0000-000000000001', {
+                    name: 'Aula 1',
+                    description: 'Aula del segundo piso',
+                    period: '00000000-0000-0000-0000-000000000000'
+                }),
+                repo.insert('10000000-0000-0000-0000-000000000002', {
+                    name: 'Cocina',
+                    description: 'Área de preparación de alimentos',
+                    period: '00000000-0000-0000-0000-000000000000'
+                })
+            ]);
+        }
+    });
+});
+
+describe('count inventory groups', () => {
+    it('should count inventory groups', async () => {
+        const result = await repo.count();
+        expect(result.ok).toBe(true);
+        expect(result.value).toBe(2);
+    });
+});
+
+describe('duplicate inventory groups', () => {
+    it('should duplicate an inventory group', async () => {
+        const result = await repo.duplicate('10000000-0000-0000-0000-000000000001');
+        expect(result.ok).toBe(true);
+        expect(result.value).toBeDefined();
+
+        const duplicatedGroupInfo = await repo.getInfo(result.value);
+        console.log(duplicatedGroupInfo);
+        expect(duplicatedGroupInfo?.name).toBe('Aula 1 (1)');
+
+        if(result.ok) await repo.remove(result.value);
+    });
+
+    it('should not duplicate a non existing inventory group', async () => {
+        const result = await repo.duplicate('00000000-0000-0000-0000-000000000000');
+        expect(result.ok).toBe(false);
+        console.log(asFailure(result).error);
+    });
+});

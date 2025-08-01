@@ -4,12 +4,12 @@ import { QueryParams } from "./filter";
 /**
  * Base genérica para repositorios de datos.
  *
- * @template T Tipo de dato completo (ej: entidad con ID)
- * @template K Tipo de dato resumen (usado por ejemplo en `getAll()`)
- * @template V Tipo de dato para registros (usado para `add()` normalmente sin ID)
- * @template U Tipo de dato para ediciones parciales (usado para `update()` donde todos los campos son opcionales menos el ID)
+ * @template TData Tipo de dato completo (ej: entidad con ID)
+ * @template TSummaryData Tipo de dato resumen (usado por ejemplo en `getAll()`)
+ * @template TDataToAdd Tipo de dato para registros (usado para `add()` normalmente sin ID)
+ * @template TDataToUpdate Tipo de dato para ediciones parciales (usado para `update()` donde todos los campos son opcionales menos el ID)
  */
-interface RepositoryTypes<T, K, V, U> {}
+interface RepositoryTypes<TData, TSummaryData, TDataToAdd, TDataToUpdate> {}
 
 //TODO interface RepositoryBase {  readonly db: Pool | PoolClient }  
 
@@ -19,15 +19,15 @@ interface RepositoryTypes<T, K, V, U> {}
  * 
  * Provee un método `add()` para agregar un elemento.
  * 
- * @template T Tipo de dato completo (ej: entidad con ID)
- * @template V Tipo de dato para registros (usado para `add()` normalmente sin ID)
+ * @template TData Tipo de dato completo (ej: entidad con ID)
+ * @template TDataToAdd Tipo de dato para registros (usado para `add()` normalmente sin ID)
  * 
  * El método `add()` es asincrónico y toma por parámetro un elemento de tipo `V`.
  * 
  * Retorna un `Result<T, string>` con el mismo elemento si la operación tuvo éxito, o un mensaje de error si no.
 */
-export interface RepositoryAddable<T, V> extends RepositoryTypes<T, any, V, any> {
-  add(data: V): Promise<Result<T, string>>;
+export interface RepositoryAddable<TData, TDataToAdd> extends RepositoryTypes<TData, any, TDataToAdd, any> {
+  add(data: TDataToAdd): Promise<Result<TData, string>>;
 }
 
 /**
@@ -35,14 +35,14 @@ export interface RepositoryAddable<T, V> extends RepositoryTypes<T, any, V, any>
  * 
  * Provee un método `addAll()` para agregar muchos elementos.
  * 
- * @template T Tipo de dato completo (ej: entidad con ID)
+ * @template TData Tipo de dato completo (ej: entidad con ID)
  * 
  * El método `addAll()` es asincrónico y toma por parámetro un elemento de tipo `T[]`.
  * 
  * Retorna un `Result<number, string>` con la cantidad de elementos agregados si la operación tuvo éxito, o un mensaje de error si no.
 */
-export interface RepositoryAddAllable<T> extends RepositoryTypes<T, any, any, any> {
-  addAll(data: T[]): Promise<Result<number, string>>;
+export interface RepositoryAddAllable<TData> extends RepositoryTypes<TData, any, any, any> {
+  addAll(data: TData[]): Promise<Result<number, string>>;
 }
 
 /**
@@ -50,15 +50,15 @@ export interface RepositoryAddAllable<T> extends RepositoryTypes<T, any, any, an
  * 
  * Provee un método `update()` para editar un solo elemento.
  * 
- * @template T Tipo de dato completo (ej: entidad con ID)
- * @template U Tipo de dato para ediciones parciales (usado para `update()` donde todos los campos son opcionales menos el ID)
+ * @template TData Tipo de dato completo (ej: entidad con ID)
+ * @template TDataToUpdate Tipo de dato para ediciones parciales (usado para `update()` donde todos los campos son opcionales menos el ID)
  * 
  * El método `update()` es asincrónico y toma por parámetro un elemento de tipo `U`.
  * 
  * Retorna un `Result<T, string>` con el elemento creado `T` si la operación tuvo éxito, o un mensaje de error si no.
 */
-export interface RepositoryUpdatable<T, U> extends RepositoryTypes<T, any, any, U> {
-  update(data: U): Promise<Result<T, string>>;
+export interface RepositoryUpdatable<TData, TDataToUpdate> extends RepositoryTypes<TData, any, any, TDataToUpdate> {
+  update(data: TDataToUpdate): Promise<Result<TData, string>>;
 }
 
 /**
@@ -66,15 +66,15 @@ export interface RepositoryUpdatable<T, U> extends RepositoryTypes<T, any, any, 
  * 
  * Provee un método `updateAll()` para editar muchos elementos.
  * 
- * @template T Tipo de dato completo (ej: entidad con ID)
- * @template U Tipo de dato para ediciones parciales (usado para `update()` donde todos los campos son opcionales menos el ID)
+ * @template TData Tipo de dato completo (ej: entidad con ID)
+ * @template TDataToUpdate Tipo de dato para ediciones parciales (usado para `update()` donde todos los campos son opcionales menos el ID)
  * 
  * El método `updateAll()` es asincrónico y toma por parámetro un elemento de tipo `U[]`.
  * 
  * Retorna un `Result<number, string>` con la cantidad de elementos editados si la operación tuvo éxito, o un mensaje de error si no.
  */
-export interface RepositoryUpdatableAllable<T, U> extends RepositoryTypes<T, any, any, U> {
-  updateAll(data: U[]): Promise<Result<number, string>>;
+export interface RepositoryUpdatableAllable<TData, TDataToUpdate> extends RepositoryTypes<TData, any, any, TDataToUpdate> {
+  updateAll(data: TDataToUpdate[]): Promise<Result<number, string>>;
 }
 
 /**
@@ -122,14 +122,14 @@ export interface RepositoryRemovableEverythingable {
  * 
  * Provee un método `get()` para obtener un elemento.
  * 
- * @template T Tipo de dato completo (ej: entidad con ID)
+ * @template TData Tipo de dato completo (ej: entidad con ID)
  * 
  * El método `get()` es asincrónico y toma por parámetro un elemento de tipo `string` haciendo referencia al ID del elemento a obtener.
  * 
  * Retorna un `Result<T, string>` con el elemento `T` si la operación tuvo éxito, o un mensaje de error si no.
  */
-export interface RepositoryGetOne<T> extends RepositoryTypes<T, any, any, any> {
-  get(id: string): Promise<T | null>;
+export interface RepositoryGetOne<TData> extends RepositoryTypes<TData, any, any, any> {
+  get(id: string): Promise<TData | null>;
 }
 
 /**
@@ -137,15 +137,15 @@ export interface RepositoryGetOne<T> extends RepositoryTypes<T, any, any, any> {
  * 
  * Provee un método `getAllSummary()` para obtener todas las entidades pero no llamando todos sus atributos.
  * 
- * @template T Tipo de dato completo (ej: entidad con ID)
- * @template K Tipo de dato resumen (usado por ejemplo en `getAll()`)
+ * @template TData Tipo de dato completo (ej: entidad con ID)
+ * @template TSummaryData Tipo de dato resumen (usado por ejemplo en `getAll()`)
  * 
  * El método `getAllSummary()` es asincrónico y toma por parámetro un elemento de tipo `QueryParams<T>`, un tipo de objeto que contiene los parámetros de búsqueda.
  * 
  * Retorna un `Result<K[], string>` con un array de `K` si la operación tuvo éxito, o un mensaje de error si no.
  */
-export interface RepositoryGetAllSummary<T, K> extends RepositoryTypes<T, K, any, any> {
-  getAllSummary(query?: QueryParams<T>): Promise<K[]>;
+export interface RepositoryGetAllSummary<TData, TSummaryData> extends RepositoryTypes<TData, TSummaryData, any, any> {
+  getAllSummary(query?: QueryParams<TData>): Promise<TSummaryData[]>;
 }
 
 /**
@@ -153,14 +153,14 @@ export interface RepositoryGetAllSummary<T, K> extends RepositoryTypes<T, K, any
  * 
  * Provee un método `getAll()` para obtener todas las entidades llamando todos sus atributos.
  * 
- * @template T Tipo de dato completo (ej: entidad con ID)
+ * @template TData Tipo de dato completo (ej: entidad con ID)
  * 
  * El método `getAll()` es asincrónico y toma por parámetro un elemento de tipo `QueryParams<T>`, un tipo de objeto que contiene los parámetros de búsqueda.
  * 
  * Retorna un `Result<T[], string>` con un array de `T` si la operación tuvo éxito, o un mensaje de error si no.
  */
-export interface RepositoryGetAll<T> extends RepositoryTypes<T, any, any, any> {
-  getAll(query?: QueryParams<T>): Promise<T[]>;
+export interface RepositoryGetAll<TData> extends RepositoryTypes<TData, any, any, any> {
+  getAll(query?: QueryParams<TData>): Promise<TData[]>;
 }
 
 /**
@@ -194,16 +194,16 @@ export interface RepositoryCountable {
  * 
  * Provee metodos de agregar, actualizar, eliminar y recuperar todos los registros
  * 
- * @template T Tipo de dato completo (ej: entidad con ID)
- * @template V Tipo de dato para registros (usado para `add()` normalmente sin ID)
- * @template U Tipo de dato para ediciones parciales (usado para `update()` donde todos los campos son opcionales menos el ID)
+ * @template TData Tipo de dato completo (ej: entidad con ID)
+ * @template TDataToAdd Tipo de dato para registros (usado para `add()` normalmente sin ID)
+ * @template TDataToUpdate Tipo de dato para ediciones parciales (usado para `update()` donde todos los campos son opcionales menos el ID)
  */
-export type RepositoryFull<T, V, U> =
-  RepositoryAddable<T, V> &
-  RepositoryUpdatable<T, U> &
+export type RepositoryFull<TData, TDataToAdd, TDataToUpdate> =
+  RepositoryAddable<TData, TDataToAdd> &
+  RepositoryUpdatable<TData, TDataToUpdate> &
   RepositoryRemovable &
-  RepositoryGetOne<T> &
-  RepositoryGetAll<T>;
+  RepositoryGetOne<TData> &
+  RepositoryGetAll<TData>;
 
 
 /**
@@ -211,10 +211,10 @@ export type RepositoryFull<T, V, U> =
  * 
  * Provee solo métodos de recuperación de datos, tanto de un elemento, de varios mediante filtros o modo de resumen.
  * 
- * @template T Tipo de dato completo (ej: entidad con ID)
- * @template K Tipo de dato resumen (usado por ejemplo en `getAll()`)
+ * @template TData Tipo de dato completo (ej: entidad con ID)
+ * @template TSummaryData Tipo de dato resumen (usado por ejemplo en `getAll()`)
  */
-export type RepositoryReadOnly<T, K> =
-  RepositoryGetOne<T> &
-  RepositoryGetAllSummary<T, K> &
-  RepositoryGetAll<T>;
+export type RepositoryReadOnly<TData, TSummaryData> =
+  RepositoryGetOne<TData> &
+  RepositoryGetAllSummary<TData, TSummaryData> &
+  RepositoryGetAll<TData>;

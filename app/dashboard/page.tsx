@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
+import * as LucideIcons from 'lucide-react'
 import {
   Package,
   FileText,
@@ -14,6 +15,7 @@ import {
   TrendingUp,
   AlertCircle,
 } from "lucide-react"
+import BasicCard from "@/components/basic-card"
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -142,13 +144,12 @@ export default function DashboardPage() {
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {quickStats.map((stat, index) => (
-          <div className="flex items-center justify-between p-4 border rounded-lg shadow-sm" key={index}>
-            <div>
-              <p className="text-sm">{stat.title}</p>
-              <p className="text-2xl font-bold">{stat.value}</p>
-            </div>
-            <stat.icon className={`w-8 h-8 ${stat.color}`} />
-          </div>
+        <BasicCard
+          title={stat.title}
+          quantity={stat.value}
+          IconComponent={stat.icon}
+          iconColor={stat.color}
+        />
         ))}
       </div>
 
@@ -165,7 +166,7 @@ export default function DashboardPage() {
             <p className="text-muted-foreground pb-3">{module.description}</p>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">{module.stats}</span>
-              <button className="h-9 rounded-md px-3 bg-white text-black text-sm" onClick={() => router.push(module.href)}>
+              <button className="btn-default btn-small" onClick={() => router.push(module.href)}>
                 Abrir
               </button>
             </div>

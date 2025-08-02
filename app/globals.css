@@ -95,7 +95,7 @@
   }
   
   button {
-    @apply rounded-md text-sm font-medium flex items-center 
+    @apply text-sm font-medium flex items-center justify-center rounded-md 
     disabled:pointer-events-none disabled:opacity-50;
   }
 
@@ -126,21 +126,9 @@
     @apply relative flex min-h-svh flex-1 flex-col bg-background peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow;
   }
 
-  .card {
-    @apply shadow-xl rounded-lg border bg-background text-foreground;
-  }
-
-  .k-text-input {
-    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm;
-  }
-
   /* Buttons */
   .btn-default {
-    @apply bg-primary text-primary-foreground hover:bg-primary/90;
-  }
-
-  .btn-normal {
-    @apply bg-primary text-primary-foreground hover:bg-primary h-10 px-4 py-2;
+    @apply bg-primary text-primary-foreground hover:bg-primary;
   }
 
   .btn-destructive {
@@ -148,7 +136,7 @@
   }
 
   .btn-outline {
-    @apply border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-md;
+    @apply border border-input bg-background hover:bg-accent hover:text-accent-foreground;
   }
 
   .btn-secondary {
@@ -173,6 +161,16 @@
 
   .btn-icon {
     @apply h-10 w-10
+  }
+
+  /* Cards */
+  .basic-card {
+    @apply shadow-xl rounded-lg border bg-background text-foreground flex items-center justify-between p-4;
+  }
+
+  /* Input */
+  .k-text-input {
+    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm;
   }
 
   /* Sidebar */

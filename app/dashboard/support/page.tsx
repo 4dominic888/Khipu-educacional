@@ -32,6 +32,7 @@ import {
   AlertCircle,
   Eye,
 } from "lucide-react"
+import BasicCard from "@/components/basic-card"
 
 interface SupportTicket {
   id: string
@@ -198,253 +199,254 @@ export default function SupportPage() {
   }
 
   return (
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-              <HelpCircle className="w-8 h-8" />
-              Centro de Soporte
-            </h1>
-            <p className="text-gray-600 mt-1">Ayuda, documentación y soporte técnico</p>
-          </div>
-          <Dialog open={isTicketDialogOpen} onOpenChange={setIsTicketDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <MessageSquare className="w-4 h-4 mr-2" />
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+            <HelpCircle className="w-8 h-8" />
+            Centro de Soporte
+          </h1>
+          <p className="text-gray-600 mt-1">Ayuda, documentación y soporte técnico</p>
+        </div>
+        <Dialog open={isTicketDialogOpen} onOpenChange={setIsTicketDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Crear Ticket
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Crear Ticket de Soporte</DialogTitle>
+              <DialogDescription>Describa su problema o solicitud para recibir ayuda</DialogDescription>
+            </DialogHeader>
+
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="subject">Asunto *</Label>
+                <Input
+                  id="subject"
+                  placeholder="Resumen breve del problema"
+                  value={newTicket.subject}
+                  onChange={(e) => setNewTicket({ ...newTicket, subject: e.target.value })}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="category">Categoría *</Label>
+                  <Select
+                    value={newTicket.category}
+                    onValueChange={(value) => setNewTicket({ ...newTicket, category: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar categoría" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Sistema">Sistema</SelectItem>
+                      <SelectItem value="Inventario">Inventario</SelectItem>
+                      <SelectItem value="Documentos">Documentos</SelectItem>
+                      <SelectItem value="Censo">Censo</SelectItem>
+                      <SelectItem value="Auditoría">Auditoría</SelectItem>
+                      <SelectItem value="Otro">Otro</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="priority">Prioridad</Label>
+                  <Select
+                    value={newTicket.priority}
+                    onValueChange={(value) => setNewTicket({ ...newTicket, priority: value as any })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Baja</SelectItem>
+                      <SelectItem value="medium">Media</SelectItem>
+                      <SelectItem value="high">Alta</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Descripción *</Label>
+                <Textarea
+                  id="description"
+                  placeholder="Describa detalladamente el problema o solicitud"
+                  value={newTicket.description}
+                  onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
+                  rows={4}
+                />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsTicketDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleCreateTicket}>
+                <Send className="w-4 h-4 mr-2" />
                 Crear Ticket
               </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Crear Ticket de Soporte</DialogTitle>
-                <DialogDescription>Describa su problema o solicitud para recibir ayuda</DialogDescription>
-              </DialogHeader>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
 
-              <div className="grid gap-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="subject">Asunto *</Label>
-                  <Input
-                    id="subject"
-                    placeholder="Resumen breve del problema"
-                    value={newTicket.subject}
-                    onChange={(e) => setNewTicket({ ...newTicket, subject: e.target.value })}
-                  />
-                </div>
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <BasicCard
+          orientation="flex-col-reverse gap-3"
+          title="Manual de Usuario"
+          quantity="Guia completa del sistema"
+          IconComponent={Book}
+          iconSize={24}
+          iconColor="text-blue-600"
+        />
+        <BasicCard
+          orientation="flex-col-reverse"
+          title="Video Tutoriales"
+          quantity="Aprende paso a paso"
+          IconComponent={Video}
+          iconColor="text-green-600"
+        />
+        <BasicCard
+          orientation="flex-col-reverse"
+          title="Soporte telefónico"
+          quantity="51 1 234-5678"
+          IconComponent={Phone}
+          iconColor="text-purple-600"
+        />
+        <BasicCard
+          orientation="flex-col-reverse"
+          title="Email"
+          quantity="soporte@khipu.edu.pe"
+          IconComponent={Mail}
+          iconColor="text-orange-600"
+        />
+      </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="category">Categoría *</Label>
-                    <Select
-                      value={newTicket.category}
-                      onValueChange={(value) => setNewTicket({ ...newTicket, category: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccionar categoría" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Sistema">Sistema</SelectItem>
-                        <SelectItem value="Inventario">Inventario</SelectItem>
-                        <SelectItem value="Documentos">Documentos</SelectItem>
-                        <SelectItem value="Censo">Censo</SelectItem>
-                        <SelectItem value="Auditoría">Auditoría</SelectItem>
-                        <SelectItem value="Otro">Otro</SelectItem>
-                      </SelectContent>
-                    </Select>
+      {/* FAQ Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Preguntas Frecuentes</CardTitle>
+          <CardDescription>Encuentre respuestas rápidas a las consultas más comunes</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Accordion type="single" collapsible className="w-full">
+            {faqs.map((faq) => (
+              <AccordionItem key={faq.id} value={faq.id}>
+                <AccordionTrigger className="text-left">
+                  <div className="flex items-center gap-2">
+                    <span>{faq.question}</span>
+                    <Badge variant="outline" className="ml-auto">
+                      {faq.category}
+                    </Badge>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="priority">Prioridad</Label>
-                    <Select
-                      value={newTicket.priority}
-                      onValueChange={(value) => setNewTicket({ ...newTicket, priority: value as any })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="low">Baja</SelectItem>
-                        <SelectItem value="medium">Media</SelectItem>
-                        <SelectItem value="high">Alta</SelectItem>
-                      </SelectContent>
-                    </Select>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-3">
+                    <p className="text-gray-700">{faq.answer}</p>
+                    <div className="flex items-center justify-between text-sm text-gray-500">
+                      <span>¿Fue útil esta respuesta?</span>
+                      <div className="flex items-center gap-2">
+                        <Button variant="ghost" size="sm">
+                          👍 Sí ({faq.helpful})
+                        </Button>
+                        <Button variant="ghost" size="sm">
+                          👎 No
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </CardContent>
+      </Card>
 
-                <div className="space-y-2">
-                  <Label htmlFor="description">Descripción *</Label>
-                  <Textarea
-                    id="description"
-                    placeholder="Describa detalladamente el problema o solicitud"
-                    value={newTicket.description}
-                    onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
-                    rows={4}
-                  />
-                </div>
-              </div>
+      {/* Support Tickets */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Mis Tickets de Soporte</CardTitle>
+          <CardDescription>Seguimiento de sus solicitudes de soporte</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {tickets.map((ticket) => {
+              const statusInfo = getStatusBadge(ticket.status)
+              const StatusIcon = statusInfo.icon
 
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsTicketDialogOpen(false)}>
-                  Cancelar
-                </Button>
-                <Button onClick={handleCreateTicket}>
-                  <Send className="w-4 h-4 mr-2" />
-                  Crear Ticket
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <CardContent className="p-6 text-center">
-              <Book className="w-12 h-12 text-blue-600 mx-auto mb-3" />
-              <h3 className="font-medium mb-2">Manual de Usuario</h3>
-              <p className="text-sm text-gray-600">Guía completa del sistema</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <CardContent className="p-6 text-center">
-              <Video className="w-12 h-12 text-green-600 mx-auto mb-3" />
-              <h3 className="font-medium mb-2">Video Tutoriales</h3>
-              <p className="text-sm text-gray-600">Aprenda paso a paso</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <CardContent className="p-6 text-center">
-              <Phone className="w-12 h-12 text-purple-600 mx-auto mb-3" />
-              <h3 className="font-medium mb-2">Soporte Telefónico</h3>
-              <p className="text-sm text-gray-600">+51 1 234-5678</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <CardContent className="p-6 text-center">
-              <Mail className="w-12 h-12 text-orange-600 mx-auto mb-3" />
-              <h3 className="font-medium mb-2">Email</h3>
-              <p className="text-sm text-gray-600">soporte@khipu.edu.pe</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* FAQ Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Preguntas Frecuentes</CardTitle>
-            <CardDescription>Encuentre respuestas rápidas a las consultas más comunes</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Accordion type="single" collapsible className="w-full">
-              {faqs.map((faq) => (
-                <AccordionItem key={faq.id} value={faq.id}>
-                  <AccordionTrigger className="text-left">
-                    <div className="flex items-center gap-2">
-                      <span>{faq.question}</span>
-                      <Badge variant="outline" className="ml-auto">
-                        {faq.category}
+              return (
+                <div key={ticket.id} className="border rounded-lg p-4 hover:bg-gray-50">
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="font-medium">{ticket.subject}</h4>
+                    <div className="flex gap-2">
+                      <Badge className={getPriorityBadge(ticket.priority)}>{getPriorityText(ticket.priority)}</Badge>
+                      <Badge className={statusInfo.color}>
+                        <StatusIcon className="w-3 h-3 mr-1" />
+                        {getStatusText(ticket.status)}
                       </Badge>
                     </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="space-y-3">
-                      <p className="text-gray-700">{faq.answer}</p>
-                      <div className="flex items-center justify-between text-sm text-gray-500">
-                        <span>¿Fue útil esta respuesta?</span>
-                        <div className="flex items-center gap-2">
-                          <Button variant="ghost" size="sm">
-                            👍 Sí ({faq.helpful})
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            👎 No
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </CardContent>
-        </Card>
-
-        {/* Support Tickets */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Mis Tickets de Soporte</CardTitle>
-            <CardDescription>Seguimiento de sus solicitudes de soporte</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {tickets.map((ticket) => {
-                const statusInfo = getStatusBadge(ticket.status)
-                const StatusIcon = statusInfo.icon
-
-                return (
-                  <div key={ticket.id} className="border rounded-lg p-4 hover:bg-gray-50">
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-medium">{ticket.subject}</h4>
-                      <div className="flex gap-2">
-                        <Badge className={getPriorityBadge(ticket.priority)}>{getPriorityText(ticket.priority)}</Badge>
-                        <Badge className={statusInfo.color}>
-                          <StatusIcon className="w-3 h-3 mr-1" />
-                          {getStatusText(ticket.status)}
-                        </Badge>
-                      </div>
-                    </div>
-                    <p className="text-gray-600 text-sm mb-3">{ticket.description}</p>
-                    <div className="flex items-center justify-between text-sm text-gray-500">
-                      <div className="flex items-center gap-4">
-                        <span>Ticket #{ticket.id}</span>
-                        <span>Categoría: {ticket.category}</span>
-                        <span>Creado: {ticket.createdAt}</span>
-                      </div>
-                      <Button variant="ghost" size="sm">
-                        <Eye className="w-4 h-4 mr-2" />
-                        Ver Detalles
-                      </Button>
-                    </div>
                   </div>
-                )
-              })}
-            </div>
-          </CardContent>
-        </Card>
+                  <p className="text-gray-600 text-sm mb-3">{ticket.description}</p>
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center gap-4">
+                      <span>Ticket #{ticket.id}</span>
+                      <span>Categoría: {ticket.category}</span>
+                      <span>Creado: {ticket.createdAt}</span>
+                    </div>
+                    <Button variant="ghost" size="sm">
+                      <Eye className="w-4 h-4 mr-2" />
+                      Ver Detalles
+                    </Button>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Contact Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Información de Contacto</CardTitle>
-            <CardDescription>Canales de comunicación para soporte técnico</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="flex items-center gap-3">
-                <Phone className="w-8 h-8 text-blue-600" />
-                <div>
-                  <h4 className="font-medium">Teléfono</h4>
-                  <p className="text-sm text-gray-600">+51 1 234-5678</p>
-                  <p className="text-xs text-gray-500">Lun-Vie 8:00-18:00</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Mail className="w-8 h-8 text-green-600" />
-                <div>
-                  <h4 className="font-medium">Email</h4>
-                  <p className="text-sm text-gray-600">soporte@khipu.edu.pe</p>
-                  <p className="text-xs text-gray-500">Respuesta en 24h</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <MessageSquare className="w-8 h-8 text-purple-600" />
-                <div>
-                  <h4 className="font-medium">Chat en Vivo</h4>
-                  <p className="text-sm text-gray-600">Disponible en horario laboral</p>
-                  <p className="text-xs text-gray-500">Respuesta inmediata</p>
-                </div>
+      {/* Contact Information */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Información de Contacto</CardTitle>
+          <CardDescription>Canales de comunicación para soporte técnico</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex items-center gap-3">
+              <Phone className="w-8 h-8 text-blue-600" />
+              <div>
+                <h4 className="font-medium">Teléfono</h4>
+                <p className="text-sm text-gray-600">+51 1 234-5678</p>
+                <p className="text-xs text-gray-500">Lun-Vie 8:00-18:00</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+            <div className="flex items-center gap-3">
+              <Mail className="w-8 h-8 text-green-600" />
+              <div>
+                <h4 className="font-medium">Email</h4>
+                <p className="text-sm text-gray-600">soporte@khipu.edu.pe</p>
+                <p className="text-xs text-gray-500">Respuesta en 24h</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <MessageSquare className="w-8 h-8 text-purple-600" />
+              <div>
+                <h4 className="font-medium">Chat en Vivo</h4>
+                <p className="text-sm text-gray-600">Disponible en horario laboral</p>
+                <p className="text-xs text-gray-500">Respuesta inmediata</p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

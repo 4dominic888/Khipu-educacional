@@ -2,12 +2,12 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { DashboardLayout } from "@/components/dashboard-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { ClipboardList, Plus, Eye, FileText, Calendar, CheckCircle, AlertCircle, Clock } from "lucide-react"
+import BasicCard from "@/components/basic-card"
 
 interface CensusReport {
   id: string
@@ -93,171 +93,150 @@ export default function CensusPage() {
   }
 
   return (
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-              <ClipboardList className="w-8 h-8" />
-              Censo Institucional
-            </h1>
-            <p className="text-gray-600 mt-1">Evaluación y seguimiento del estado de la institución</p>
-          </div>
-          <Button onClick={() => router.push("/dashboard/census/create")}>
-            <Plus className="w-4 h-4 mr-2" />
-            Nuevo Censo
-          </Button>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+            <ClipboardList className="w-8 h-8" />
+            Censo Institucional
+          </h1>
+          <p className="text-gray-600 mt-1">Evaluación y seguimiento del estado de la institución</p>
         </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Total Censos</p>
-                  <p className="text-2xl font-bold">{reports.length}</p>
-                </div>
-                <ClipboardList className="w-8 h-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Completados</p>
-                  <p className="text-2xl font-bold">{reports.filter((r) => r.status === "completed").length}</p>
-                </div>
-                <CheckCircle className="w-8 h-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">En Progreso</p>
-                  <p className="text-2xl font-bold">{reports.filter((r) => r.status === "in_progress").length}</p>
-                </div>
-                <AlertCircle className="w-8 h-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Borradores</p>
-                  <p className="text-2xl font-bold">{reports.filter((r) => r.status === "draft").length}</p>
-                </div>
-                <Clock className="w-8 h-8 text-gray-600" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Reports List */}
-        <div className="grid gap-6">
-          {reports.map((report) => {
-            const statusInfo = getStatusBadge(report.status)
-            const StatusIcon = statusInfo.icon
-
-            return (
-              <Card key={report.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <CardTitle className="flex items-center gap-2">
-                        {report.title}
-                        <Badge className={statusInfo.color}>
-                          <StatusIcon className="w-3 h-3 mr-1" />
-                          {getStatusText(report.status)}
-                        </Badge>
-                      </CardTitle>
-                      <CardDescription className="mt-1">{report.description}</CardDescription>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
-                        <Eye className="w-4 h-4 mr-2" />
-                        Ver
-                      </Button>
-                      {report.status === "completed" && (
-                        <Button variant="outline" size="sm">
-                          <FileText className="w-4 h-4 mr-2" />
-                          Reporte
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {/* Progress */}
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Progreso</span>
-                        <span>{report.progress}%</span>
-                      </div>
-                      <Progress value={report.progress} className="h-2" />
-                    </div>
-
-                    {/* Sections */}
-                    <div className="space-y-2">
-                      <h4 className="font-medium text-sm">Secciones</h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                        {report.sections.map((section, index) => (
-                          <div
-                            key={index}
-                            className={`flex items-center gap-2 p-2 rounded-lg text-sm ${
-                              section.completed ? "bg-green-50 text-green-800" : "bg-gray-50 text-gray-600"
-                            }`}
-                          >
-                            {section.completed ? (
-                              <CheckCircle className="w-4 h-4 text-green-600" />
-                            ) : (
-                              <Clock className="w-4 h-4 text-gray-400" />
-                            )}
-                            <span>{section.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Metadata */}
-                    <div className="flex items-center gap-4 text-sm text-gray-500 pt-2 border-t">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        <span>Creado: {report.createdAt}</span>
-                      </div>
-                      {report.completedAt && (
-                        <div className="flex items-center gap-1">
-                          <CheckCircle className="w-4 h-4" />
-                          <span>Completado: {report.completedAt}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })}
-        </div>
-
-        {/* Empty State */}
-        {reports.length === 0 && (
-          <Card>
-            <CardContent className="p-12 text-center">
-              <ClipboardList className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No hay censos registrados</h3>
-              <p className="text-gray-600 mb-4">Comience creando su primer censo institucional</p>
-              <Button onClick={() => router.push("/dashboard/census/create")}>
-                <Plus className="w-4 h-4 mr-2" />
-                Crear Primer Censo
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+        <Button onClick={() => router.push("/dashboard/census/create")}>
+          <Plus className="w-4 h-4 mr-2" />
+          Nuevo Censo
+        </Button>
       </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <BasicCard
+          title="Total Censos"
+          quantity={reports.length}
+          IconComponent={ClipboardList}
+          iconColor="text-blue-600"
+        />
+        <BasicCard
+          title="Completados"
+          quantity={reports.filter((r) => r.status === "completed").length}
+          IconComponent={CheckCircle}
+          iconColor="text-green-600"
+        />
+        <BasicCard
+          title="En progreso"
+          quantity={reports.filter((r) => r.status === "in_progress").length}
+          IconComponent={ClipboardList}
+          iconColor="text-blue-600"
+        />
+        <BasicCard
+          title="Total Censos"
+          quantity={reports.filter((r) => r.status === "draft").length}
+          IconComponent={ClipboardList}
+          iconColor="text-gray-600"
+        />
+      </div>
+
+      {/* Reports List */}
+      <div className="grid gap-6">
+        {reports.map((report) => {
+          const statusInfo = getStatusBadge(report.status)
+          const StatusIcon = statusInfo.icon
+
+          return (
+            <Card key={report.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <CardTitle className="flex items-center gap-2">
+                      {report.title}
+                      <Badge className={statusInfo.color}>
+                        <StatusIcon className="w-3 h-3 mr-1" />
+                        {getStatusText(report.status)}
+                      </Badge>
+                    </CardTitle>
+                    <CardDescription className="mt-1">{report.description}</CardDescription>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm">
+                      <Eye className="w-4 h-4 mr-2" />
+                      Ver
+                    </Button>
+                    {report.status === "completed" && (
+                      <Button variant="outline" size="sm">
+                        <FileText className="w-4 h-4 mr-2" />
+                        Reporte
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {/* Progress */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Progreso</span>
+                      <span>{report.progress}%</span>
+                    </div>
+                    <Progress value={report.progress} className="h-2" />
+                  </div>
+
+                  {/* Sections */}
+                  <div className="space-y-2">
+                    <h4 className="font-medium text-sm">Secciones</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                      {report.sections.map((section, index) => (
+                        <div
+                          key={index}
+                          className={`flex items-center gap-2 p-2 rounded-lg text-sm ${section.completed ? "bg-green-50 text-green-800" : "bg-gray-50 text-gray-600"
+                            }`}
+                        >
+                          {section.completed ? (
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <Clock className="w-4 h-4 text-gray-400" />
+                          )}
+                          <span>{section.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Metadata */}
+                  <div className="flex items-center gap-4 text-sm text-gray-500 pt-2 border-t">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>Creado: {report.createdAt}</span>
+                    </div>
+                    {report.completedAt && (
+                      <div className="flex items-center gap-1">
+                        <CheckCircle className="w-4 h-4" />
+                        <span>Completado: {report.completedAt}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
+
+      {/* Empty State */}
+      {reports.length === 0 && (
+        <Card>
+          <CardContent className="p-12 text-center">
+            <ClipboardList className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No hay censos registrados</h3>
+            <p className="text-gray-600 mb-4">Comience creando su primer censo institucional</p>
+            <Button onClick={() => router.push("/dashboard/census/create")}>
+              <Plus className="w-4 h-4 mr-2" />
+              Crear Primer Censo
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+    </div>
   )
 }

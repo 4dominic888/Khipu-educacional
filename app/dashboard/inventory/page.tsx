@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Collapse, Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
@@ -12,8 +11,6 @@ import {
   Search,
   Plus,
   Package,
-  DollarSign,
-  Hash,
   Eye,
   Edit,
   Trash2,
@@ -21,8 +18,10 @@ import {
   ChevronRight,
   Building2,
   Layers,
+  Hash,
 } from "lucide-react"
 import { inventoryService, type InventoryItem, type InventoryGroup } from "@/lib/services/inventory-service"
+import BasicCard from "@/components/basic-card"
 
 export default function InventoryPage() {
   const router = useRouter()
@@ -146,7 +145,7 @@ export default function InventoryPage() {
           <p className="mt-1">Gestión de bienes y equipos de la institución</p>
         </div>
         <button
-          className="btn-normal"
+          className="btn-default btn-sdefault"
           onClick={() => router.push("/dashboard/inventory/add")}>
           <Plus className="w-4 h-4 mr-2" />
           Agregar Item
@@ -155,34 +154,30 @@ export default function InventoryPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="flex items-center justify-between p-4 border rounded-lg shadow-sm">
-          <div>
-            <p className="text-sm">Total Items</p>
-            <p className="text-2xl font-bold">{totalItems}</p>
-          </div>
-          <Package className={`w-8 h-8 text-blue-600`} />
-        </div>
-        <div className="flex items-center justify-between p-4 border rounded-lg shadow-sm">
-          <div>
-            <p className="text-sm">Cantidad Total</p>
-            <p className="text-2xl font-bold">{totalQuantity}</p>
-          </div>
-          <Hash className={`w-8 h-8 text-green-600`} />
-        </div>
-        <div className="flex items-center justify-between p-4 border rounded-lg shadow-sm">
-          <div>
-            <p className="text-sm">Valor Total</p>
-            <p className="text-2xl font-bold">S/ {totalValue.toFixed(2)}</p>
-          </div>
-          <DollarSign className={`w-8 h-8 text-purple-600`} />
-        </div>
-        <div className="flex items-center justify-between p-4 border rounded-lg shadow-sm">
-          <div>
-            <p className="text-sm">Grupos</p>
-            <p className="text-2xl font-bold">{groups.length}</p>
-          </div>
-          <Building2 className={`w-8 h-8 text-orange-600`} />
-        </div>
+        <BasicCard
+          title="Total Items"
+          quantity={totalItems}
+          IconComponent={Package}
+          iconColor="text-blue-600"
+        />
+        <BasicCard
+          title="Cantidad Total"
+          quantity={totalItems}
+          IconComponent={Hash}
+          iconColor="text-green-600"
+        />
+        <BasicCard
+          title="Valor Total"
+          quantity={totalItems}
+          IconComponent={Package}
+          iconColor="text-purple-600"
+        />
+        <BasicCard
+          title="Grupos"
+          quantity={totalItems}
+          IconComponent={Building2}
+          iconColor="text-orange-600"
+        />
       </div>
 
       {/* Search */}
@@ -201,7 +196,7 @@ export default function InventoryPage() {
       {/* Grouped Items */}
       <div className="space-y-4">
         {groupedItems.map(({ group, productTypes, totalItems, totalQuantity, totalValue }) => (
-          <div className="flex p-7 border rounded-lg shadow-sm cursor-pointer flex-col my-1 hover:bg-[var(--input)]">
+          <div className="flex p-7 border rounded-lg shadow-sm cursor-pointer flex-col my-1 hover:bg-[var(--input)]" key={group.id}>
             <Collapse
               open={expandedGroups.has(group.id)}
               onToggle={() => toggleGroupExpansion(group.id)}
@@ -243,7 +238,7 @@ export default function InventoryPage() {
                       <p className="text-xs">Valor</p>
                     </div>
                     <button
-                      className="btn-normal"
+                      className="btn-default btn-small"
                       onClick={(e) => {
                         e.stopPropagation()
                         router.push(`/dashboard/inventory/add?group=${group.id}`)
@@ -259,7 +254,7 @@ export default function InventoryPage() {
                 {Object.entries(productTypes).map(([productType, items]) => {
                   const productTypeKey = `${group.id}-${productType}`
                   return (
-                    <div className="cursor-pointer border rounded-lg shadow-sm hover:bg-[var(--input)]transition-colors py-3 space-y-1.5 p-6 border-l-4 border-l-[var(--foreground)]">
+                    <div className="cursor-pointer border rounded-lg shadow-sm hover:bg-[var(--input)]transition-colors py-3 space-y-1.5 p-6 border-l-4 border-l-[var(--foreground)]" >
                       <Collapse
                         open={expandedProductTypes.has(productTypeKey)}
                         onToggle={() => toggleProductTypeExpansion(productTypeKey)}

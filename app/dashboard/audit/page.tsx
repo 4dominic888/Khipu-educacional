@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Shield, Search, Download, Eye, Calendar, User, Activity, AlertTriangle } from "lucide-react"
+import BasicCard from "@/components/basic-card"
 
 interface AuditLog {
   id: string
@@ -200,178 +201,153 @@ export default function AuditPage() {
   const modules = [...new Set(auditLogs.map((log) => log.module))]
 
   return (
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-              <Shield className="w-8 h-8" />
-              Auditoría del Sistema
-            </h1>
-            <p className="text-gray-600 mt-1">Seguimiento y registro de actividades del sistema</p>
-          </div>
-          <Button onClick={exportAuditLog}>
-            <Download className="w-4 h-4 mr-2" />
-            Exportar Log
-          </Button>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+            <Shield className="w-8 h-8" />
+            Auditoría del Sistema
+          </h1>
+          <p className="text-gray-600 mt-1">Seguimiento y registro de actividades del sistema</p>
         </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Total Eventos</p>
-                  <p className="text-2xl font-bold">{filteredLogs.length}</p>
-                </div>
-                <Activity className="w-8 h-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Usuarios Activos</p>
-                  <p className="text-2xl font-bold">{new Set(filteredLogs.map((log) => log.userId)).size}</p>
-                </div>
-                <User className="w-8 h-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Eventos Críticos</p>
-                  <p className="text-2xl font-bold">{filteredLogs.filter((log) => log.severity === "high").length}</p>
-                </div>
-                <AlertTriangle className="w-8 h-8 text-red-600" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Hoy</p>
-                  <p className="text-2xl font-bold">
-                    {
-                      filteredLogs.filter((log) => new Date(log.timestamp).toDateString() === new Date().toDateString())
-                        .length
-                    }
-                  </p>
-                </div>
-                <Calendar className="w-8 h-8 text-purple-600" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Filters */}
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    placeholder="Buscar por usuario, acción o detalles..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-              <Select value={moduleFilter} onValueChange={setModuleFilter}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Filtrar por módulo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos los módulos</SelectItem>
-                  {modules.map((module) => (
-                    <SelectItem key={module} value={module}>
-                      {module}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={severityFilter} onValueChange={setSeverityFilter}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Filtrar por severidad" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas las severidades</SelectItem>
-                  <SelectItem value="low">Bajo</SelectItem>
-                  <SelectItem value="medium">Medio</SelectItem>
-                  <SelectItem value="high">Alto</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Audit Log Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Registro de Auditoría</CardTitle>
-            <CardDescription>{filteredLogs.length} eventos encontrados</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Fecha/Hora</TableHead>
-                    <TableHead>Usuario</TableHead>
-                    <TableHead>Acción</TableHead>
-                    <TableHead>Módulo</TableHead>
-                    <TableHead>Detalles</TableHead>
-                    <TableHead>Severidad</TableHead>
-                    <TableHead>IP</TableHead>
-                    <TableHead>Acciones</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredLogs.map((log) => (
-                    <TableRow key={log.id}>
-                      <TableCell className="font-mono text-sm">
-                        {new Date(log.timestamp).toLocaleString("es-PE")}
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <p className="font-medium">{log.userName}</p>
-                          <p className="text-sm text-gray-500">{log.userId}</p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className={`font-medium ${getActionColor(log.action)}`}>{log.action}</span>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{log.module}</Badge>
-                      </TableCell>
-                      <TableCell className="max-w-xs">
-                        <p className="truncate" title={log.details}>
-                          {log.details}
-                        </p>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getSeverityBadge(log.severity)}>{getSeverityText(log.severity)}</Badge>
-                      </TableCell>
-                      <TableCell className="font-mono text-sm">{log.ipAddress}</TableCell>
-                      <TableCell>
-                        <Button variant="ghost" size="sm">
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
+        <Button onClick={exportAuditLog}>
+          <Download className="w-4 h-4 mr-2" />
+          Exportar Log
+        </Button>
       </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <BasicCard
+          title="Total Eventos"
+          quantity={filteredLogs.length}
+          IconComponent={Activity}
+          iconColor="text-blue-600"
+        />
+        <BasicCard
+          title="Usuarios Activos"
+          quantity={new Set(filteredLogs.map((log) => log.userId)).size}
+          IconComponent={User}
+          iconColor="text-green-600"
+        />
+        <BasicCard
+          title="Eventos Críticos"
+          quantity={filteredLogs.filter((log) => log.severity === "high").length}
+          IconComponent={AlertTriangle}
+          iconColor="text-red-600"
+        />
+        <BasicCard
+          title="Hoy"
+          quantity={filteredLogs.filter((log) => new Date(log.timestamp).toDateString() === new Date().toDateString()).length}
+          IconComponent={Calendar}
+          iconColor="text-purple-600"
+        />
+      </div>
+
+      {/* Filters */}
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Buscar por usuario, acción o detalles..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <Select value={moduleFilter} onValueChange={setModuleFilter}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Filtrar por módulo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos los módulos</SelectItem>
+                {modules.map((module) => (
+                  <SelectItem key={module} value={module}>
+                    {module}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={severityFilter} onValueChange={setSeverityFilter}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Filtrar por severidad" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas las severidades</SelectItem>
+                <SelectItem value="low">Bajo</SelectItem>
+                <SelectItem value="medium">Medio</SelectItem>
+                <SelectItem value="high">Alto</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Audit Log Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Registro de Auditoría</CardTitle>
+          <CardDescription>{filteredLogs.length} eventos encontrados</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Fecha/Hora</TableHead>
+                  <TableHead>Usuario</TableHead>
+                  <TableHead>Acción</TableHead>
+                  <TableHead>Módulo</TableHead>
+                  <TableHead>Detalles</TableHead>
+                  <TableHead>Severidad</TableHead>
+                  <TableHead>IP</TableHead>
+                  <TableHead>Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredLogs.map((log) => (
+                  <TableRow key={log.id}>
+                    <TableCell className="font-mono text-sm">
+                      {new Date(log.timestamp).toLocaleString("es-PE")}
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <p className="font-medium">{log.userName}</p>
+                        <p className="text-sm text-gray-500">{log.userId}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className={`font-medium ${getActionColor(log.action)}`}>{log.action}</span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{log.module}</Badge>
+                    </TableCell>
+                    <TableCell className="max-w-xs">
+                      <p className="truncate" title={log.details}>
+                        {log.details}
+                      </p>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={getSeverityBadge(log.severity)}>{getSeverityText(log.severity)}</Badge>
+                    </TableCell>
+                    <TableCell className="font-mono text-sm">{log.ipAddress}</TableCell>
+                    <TableCell>
+                      <Button variant="ghost" size="sm">
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

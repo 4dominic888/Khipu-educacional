@@ -29,7 +29,7 @@ const RadioGroupItem = React.forwardRef<
       value={value}
       id={id}
       className={cn(
-        "flex items-center space-x-2 p-3 border border-input rounded-lg text-left",
+        "flex justify-start space-x-2 p-3 border border-input rounded-lg text-left",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         "disabled:cursor-not-allowed disabled:opacity-50",
         "data-[state=checked]:border-primary data-[state=checked]:text-primary",

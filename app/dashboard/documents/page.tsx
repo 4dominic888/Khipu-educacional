@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { FileText, Plus, Download, Eye, Calendar, Users, FileDown } from "lucide-react"
+import BasicCard from "@/components/basic-card"
 
 interface DocumentTemplate {
   id: string
@@ -198,222 +199,200 @@ export default function DocumentsPage() {
   }
 
   return (
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-              <FileText className="w-8 h-8" />
-              Documentos de Gestión
-            </h1>
-            <p className="text-gray-600 mt-1">Generación de documentos y plantillas institucionales</p>
-          </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+            <FileText className="w-8 h-8" />
+            Documentos de Gestión
+          </h1>
+          <p className="text-gray-600 mt-1">Generación de documentos y plantillas institucionales</p>
         </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Plantillas</p>
-                  <p className="text-2xl font-bold">{templates.length}</p>
-                </div>
-                <FileText className="w-8 h-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Documentos Generados</p>
-                  <p className="text-2xl font-bold">{generatedDocs.length}</p>
-                </div>
-                <FileDown className="w-8 h-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Este Mes</p>
-                  <p className="text-2xl font-bold">
-                    {generatedDocs.filter((doc) => new Date(doc.createdAt).getMonth() === new Date().getMonth()).length}
-                  </p>
-                </div>
-                <Calendar className="w-8 h-8 text-purple-600" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Categorías</p>
-                  <p className="text-2xl font-bold">{new Set(templates.map((t) => t.category)).size}</p>
-                </div>
-                <Users className="w-8 h-8 text-orange-600" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Document Templates */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Plantillas Disponibles</CardTitle>
-            <CardDescription>Seleccione una plantilla para generar un nuevo documento</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {templates.map((template) => (
-                <Card key={template.id} className="hover:shadow-lg transition-shadow cursor-pointer">
-                  <CardHeader className="pb-3">
-                    <div className="flex justify-between items-start">
-                      <CardTitle className="text-lg">{template.name}</CardTitle>
-                      <Badge className={getCategoryColor(template.category)}>{template.category}</Badge>
-                    </div>
-                    <CardDescription className="text-sm">{template.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-500">{template.fields.length} campos</span>
-                      <Button size="sm" onClick={() => handleTemplateSelect(template)}>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Usar
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Generated Documents */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Documentos Generados</CardTitle>
-            <CardDescription>Historial de documentos creados</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {generatedDocs.map((doc) => (
-                <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-8 h-8 text-blue-600" />
-                    <div>
-                      <h4 className="font-medium">{doc.title}</h4>
-                      <div className="flex items-center gap-4 text-sm text-gray-500">
-                        <span>Plantilla: {doc.templateName}</span>
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-4 h-4" />
-                          {doc.createdAt}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Users className="w-4 h-4" />
-                          {doc.createdBy}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
-                      <Eye className="w-4 h-4 mr-2" />
-                      Ver
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={() => handleDownloadDocument(doc)}>
-                      <Download className="w-4 h-4 mr-2" />
-                      Descargar
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Create Document Dialog */}
-        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Generar Documento: {selectedTemplate?.name}</DialogTitle>
-              <DialogDescription>Complete los campos para generar el documento</DialogDescription>
-            </DialogHeader>
-
-            {selectedTemplate && (
-              <div className="grid gap-4 py-4">
-                {selectedTemplate.fields.map((field) => (
-                  <div key={field.name} className="space-y-2">
-                    <Label htmlFor={field.name}>
-                      {field.label}
-                      {field.required && <span className="text-red-500 ml-1">*</span>}
-                    </Label>
-
-                    {field.type === "text" && (
-                      <Input
-                        id={field.name}
-                        value={formData[field.name] || ""}
-                        onChange={(e) => handleFieldChange(field.name, e.target.value)}
-                        required={field.required}
-                      />
-                    )}
-
-                    {field.type === "textarea" && (
-                      <Textarea
-                        id={field.name}
-                        value={formData[field.name] || ""}
-                        onChange={(e) => handleFieldChange(field.name, e.target.value)}
-                        required={field.required}
-                        rows={3}
-                      />
-                    )}
-
-                    {field.type === "date" && (
-                      <Input
-                        id={field.name}
-                        type="date"
-                        value={formData[field.name] || ""}
-                        onChange={(e) => handleFieldChange(field.name, e.target.value)}
-                        required={field.required}
-                      />
-                    )}
-
-                    {field.type === "select" && field.options && (
-                      <Select
-                        value={formData[field.name] || ""}
-                        onValueChange={(value) => handleFieldChange(field.name, value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Seleccionar..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {field.options.map((option) => (
-                            <SelectItem key={option} value={option}>
-                              {option}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                Cancelar
-              </Button>
-              <Button onClick={handleGenerateDocument}>
-                <FileDown className="w-4 h-4 mr-2" />
-                Generar Documento
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <BasicCard
+          title="Plantillas"
+          quantity={templates.length}
+          IconComponent={FileText}
+          iconColor="text-blue-600"
+        />
+        <BasicCard
+          title="Documentos Generales"
+          quantity={generatedDocs.length}
+          IconComponent={FileDown}
+          iconColor="text-green-600"
+        />
+        <BasicCard
+          title="Este Mes"
+          quantity={generatedDocs.filter((doc) => new Date(doc.createdAt).getMonth() === new Date().getMonth()).length}
+          IconComponent={Calendar}
+          iconColor="text-purple-600"
+        />
+        <BasicCard
+          title="Categorías"
+          quantity={new Set(templates.map((t) => t.category)).size}
+          IconComponent={Users}
+          iconColor="text-orange-600"
+        />
+      </div>
+
+      {/* Document Templates */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Plantillas Disponibles</CardTitle>
+          <CardDescription>Seleccione una plantilla para generar un nuevo documento</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {templates.map((template) => (
+              <Card key={template.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+                <CardHeader className="pb-3">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">{template.name}</CardTitle>
+                    <Badge className={getCategoryColor(template.category)}>{template.category}</Badge>
+                  </div>
+                  <CardDescription className="text-sm">{template.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-500">{template.fields.length} campos</span>
+                    <Button size="sm" onClick={() => handleTemplateSelect(template)}>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Usar
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Generated Documents */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Documentos Generados</CardTitle>
+          <CardDescription>Historial de documentos creados</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {generatedDocs.map((doc) => (
+              <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                <div className="flex items-center gap-3">
+                  <FileText className="w-8 h-8 text-blue-600" />
+                  <div>
+                    <h4 className="font-medium">{doc.title}</h4>
+                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                      <span>Plantilla: {doc.templateName}</span>
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        {doc.createdAt}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Users className="w-4 h-4" />
+                        {doc.createdBy}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm">
+                    <Eye className="w-4 h-4 mr-2" />
+                    Ver
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => handleDownloadDocument(doc)}>
+                    <Download className="w-4 h-4 mr-2" />
+                    Descargar
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Create Document Dialog */}
+      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Generar Documento: {selectedTemplate?.name}</DialogTitle>
+            <DialogDescription>Complete los campos para generar el documento</DialogDescription>
+          </DialogHeader>
+
+          {selectedTemplate && (
+            <div className="grid gap-4 py-4">
+              {selectedTemplate.fields.map((field) => (
+                <div key={field.name} className="space-y-2">
+                  <Label htmlFor={field.name}>
+                    {field.label}
+                    {field.required && <span className="text-red-500 ml-1">*</span>}
+                  </Label>
+
+                  {field.type === "text" && (
+                    <Input
+                      id={field.name}
+                      value={formData[field.name] || ""}
+                      onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                      required={field.required}
+                    />
+                  )}
+
+                  {field.type === "textarea" && (
+                    <Textarea
+                      id={field.name}
+                      value={formData[field.name] || ""}
+                      onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                      required={field.required}
+                      rows={3}
+                    />
+                  )}
+
+                  {field.type === "date" && (
+                    <Input
+                      id={field.name}
+                      type="date"
+                      value={formData[field.name] || ""}
+                      onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                      required={field.required}
+                    />
+                  )}
+
+                  {field.type === "select" && field.options && (
+                    <Select
+                      value={formData[field.name] || ""}
+                      onValueChange={(value) => handleFieldChange(field.name, value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccionar..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {field.options.map((option) => (
+                          <SelectItem key={option} value={option}>
+                            {option}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleGenerateDocument}>
+              <FileDown className="w-4 h-4 mr-2" />
+              Generar Documento
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   )
 }

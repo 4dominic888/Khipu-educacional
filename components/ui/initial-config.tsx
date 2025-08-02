@@ -109,9 +109,9 @@ const InitialConfig = () => {
                             />
                         </div>
                         <button
-                            className="w-full btn-normal"
-                            disabled={!institution.name}
+                            className="w-full btn-default btn-sdefault"
                             onClick={() => setStep(2)}
+                            disabled={!institution.name || !institution.phone || !institution.address || !institution.email }
                         >
                             Continuar
                         </button>
@@ -165,8 +165,8 @@ const InitialConfig = () => {
                         </div>
 
                         <div className="flex gap-2">
-                            <button className='btn-outline flex-1' onClick={() => setStep(1)}>Atrás</button>
-                            <button className='btn-normal flex-1'
+                            <button className='btn-outline btn-sdefault flex-1' onClick={() => setStep(1)}>Atrás</button>
+                            <button className='btn-default btn-sdefault flex-1'
                                 onClick={handleSubmit}
                                 disabled={!institution.director || !institution.directorDni || institution.directorDni.length !== 8}
                             >

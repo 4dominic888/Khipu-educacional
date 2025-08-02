@@ -79,44 +79,103 @@
   }
 }
 
+
+
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   label {
     @apply text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70;
   }
+  
+  button {
+    @apply rounded-md text-sm font-medium flex items-center 
+    disabled:pointer-events-none disabled:opacity-50;
+  }
+
   textarea {
     @apply flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm;
   }
+
   p {
     @apply text-sm text-gray-600;
   }
+
   h2 {
     @apply font-semibold text-sm truncate
   }
+
   header {
     @apply flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4 z-30;
+  }
+
+  input{
+    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background 
+    file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm
   }
 }
 
 @layer components {
-  /* from-blue-50 to-indigo-100 */
+  .main-content {
+    @apply relative flex min-h-svh flex-1 flex-col bg-background peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow;
+  }
+
   .card {
     @apply shadow-xl rounded-lg border bg-background text-foreground;
   }
+
   .k-text-input {
     @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm;
   }
+
+  /* Buttons */
+  .btn-default {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+  }
+
+  .btn-normal {
+    @apply bg-primary text-primary-foreground hover:bg-primary h-10 px-4 py-2;
+  }
+
+  .btn-destructive {
+    @apply bg-destructive text-destructive-foreground hover:bg-destructive/90;
+  }
+
   .btn-outline {
     @apply border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-md;
   }
-  .btn-normal {
-    @apply bg-primary text-primary-foreground hover:bg-primary h-10 px-4 py-2 rounded-md text-sm font-medium disabled:pointer-events-none disabled:opacity-50;
+
+  .btn-secondary {
+    @apply bg-destructive text-destructive-foreground hover:bg-destructive/90;
   }
+
+  .btn-ghost {
+    @apply hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)];
+  }
+
+  .btn-sdefault {
+    @apply h-10 px-4 py-2
+  }
+
+  .btn-small {
+    @apply h-9 rounded-md px-3
+  }
+
+  .btn-lg {
+    @apply h-11 rounded-md px-8
+  }
+
+  .btn-icon {
+    @apply h-10 w-10
+  }
+
+  /* Sidebar */
   .sidebar-container {
     @apply flex min-h-svh w-full ;
     /* group/sidebar-wrapper  */
@@ -136,7 +195,5 @@
     @apply flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 px-4 py-2;
     /* group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 */
   }
-  .main-content {
-    @apply relative flex min-h-svh flex-1 flex-col bg-background peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow;
-  }
+
 }

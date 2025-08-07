@@ -24,7 +24,7 @@ const BasicCard: React.FC<BasicCardProps> = ({
         <div className={`basic-card ${orientation}`}>
             <div>
                 <p className="text-sm text-primary">{title}</p>
-                <p className="text-2xl font-bold text-secondary-foreground">{quantity}</p>
+                <p className="text-2xl font-bold text-secondary-text ">{quantity}</p>
                 <p className="text-xs text-gray-500">{hint}</p>
             </div>
             <IconComponent className={`w-${iconSize} h-${iconSize} ${iconColor}`} />

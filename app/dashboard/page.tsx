@@ -108,7 +108,7 @@ export default function DashboardPage() {
     },
   ]
 
-    const activity = [
+  const activity = [
     {
       title: "Nuevo item agregado al inventario",
       value: "Hace 2 horas",
@@ -144,12 +144,12 @@ export default function DashboardPage() {
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {quickStats.map((stat, index) => (
-        <BasicCard
-          title={stat.title}
-          quantity={stat.value}
-          IconComponent={stat.icon}
-          iconColor={stat.color}
-        />
+          <BasicCard
+            title={stat.title}
+            quantity={stat.value}
+            IconComponent={stat.icon}
+            iconColor={stat.color}
+          />
         ))}
       </div>
 
@@ -180,16 +180,23 @@ export default function DashboardPage() {
           <AlertCircle className="w-5 h-5" />
           <h1 className="flex items-center gap-2 text-2xl font-semibold leading-none tracking-tight">Actividad reciente</h1>
         </div>
+        {/* <BasicCard
+          orientation="flex-row-reverse"
+          title="{stat.title}"
+          quantity="{stat.value}"
+          IconComponent={AlertCircle}
+          iconColor="text-blue-600"
+        /> */}
         {activity.map((activity) => (
-        <div className="flex p-3 border rounded-lg shadow-sm cursor-pointer flex-col my-1">
-          <div className="flex items-center gap-3">
-            <activity.icon className={`w-6 h-6 p-1 ${activity.color}`} />
-            <div>
-              <h1 className="text-sm font-medium">{activity.title}</h1>
-              <p className="text-xs text-muted-foreground ">{activity.value}</p>
+          <div className="flex p-3 border rounded-lg shadow-sm cursor-pointer flex-col my-1">
+            <div className="flex items-center gap-3">
+              <activity.icon className={`w-6 h-6 p-1 ${activity.color}`} />
+              <div>
+                <h1 className="text-sm font-medium">{activity.title}</h1>
+                <p className="text-xs text-muted-foreground ">{activity.value}</p>
+              </div>
             </div>
           </div>
-        </div>
         ))}
       </div>
     </div>

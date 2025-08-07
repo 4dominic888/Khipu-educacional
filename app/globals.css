@@ -4,6 +4,8 @@
 
 @layer base {
   :root {
+    --secondary-text: #2e2e2e;
+
     --background: #ffffff; /* 1 */
     --foreground: #09090b; /* 2 */
     --card: #ffffff; /* 1 */
@@ -20,7 +22,7 @@
     --accent-foreground: #18181b; /* 3 */
     --destructive: #ef4444; /* 8 */
     --destructive-foreground: #fafafa; /* 4 */
-    --border: #e4e4e7; /* 9 */
+    --border: #bdbdbd; /* 9 */
     --input: #e4e4e7; /* 9 */
     --ring: #18181b; /* 3 */
     --radius: 0.5rem;
@@ -42,6 +44,8 @@
   }
 
   .dark {
+    --secondary-text: #b1b1b1;
+
     --background: #09090b; /* 1 */
     --foreground: #fafafa; /* 2 */
     --card: #09090b; /* 1 */
@@ -78,7 +82,6 @@
     --sidebar-ring: #3b82f5; /* 14 */
   }
 }
-
 
 
 @layer base {

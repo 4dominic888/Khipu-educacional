@@ -20,6 +20,7 @@ const config: Config = {
     },
     extend: {
       colors: {
+
         border: "var(--border)",
         input: "var(--input)",
         ring: "var(--ring)",
@@ -29,10 +30,13 @@ const config: Config = {
           DEFAULT: "var(--primary)",
           foreground: "var(--primary-foreground)",
         },
+        
         secondary: {
           DEFAULT: "var(--secondary)",
           foreground: "var(--secondary-foreground)",
+          text: "var(--secondary-text)",
         },
+
         destructive: {
           DEFAULT: "var(--destructive)",
           foreground: "var(--destructive-foreground)",

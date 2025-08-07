@@ -299,35 +299,32 @@ export default function InventoryPage() {
                         <div className="space-y-4 mt-4">
                           <div className="pt-0">
                             <div className="overflow-x-auto">
-                              <Table>
-                                <TableHeader>
-                                  <TableRow>
-                                    <TableHead>Variante</TableHead>
-                                    <TableHead>Descripción</TableHead>
-                                    <TableHead>Estados</TableHead>
-                                    <TableHead>Cantidad</TableHead>
-                                    <TableHead>Valor Total</TableHead>
-                                    <TableHead>Acciones</TableHead>
-                                  </TableRow>
-                                </TableHeader>
-                                <TableBody>
+                              <div >
+                                <div className="flex">                              <p>Variante</p>
+                                  <p>Descripcion</p>
+                                  <p>Estados</p>
+                                  <p>Cantidad</p>
+                                  <p>Valor Total</p>
+                                  <p>Acciones</p>
+                                </div>
+                                <div>
                                   {items.map((item) => {
                                     const totals = inventoryService.getItemTotals(item)
                                     const displayName = inventoryService.getItemDisplayName(item)
                                     const variantDescription = inventoryService.getVariantDescription(item)
 
                                     return (
-                                      <TableRow key={item.id}>
-                                        <TableCell>
+                                      <div className="flex border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted py-4 px-4" key={item.id}>
+                                        <div className="flex-1 min-w-0 pr-4">
                                           <div>
                                             <p className="font-medium">{displayName}</p>
                                             <p className="text-xs text-gray-500">ID: {item.id}</p>
                                           </div>
-                                        </TableCell>
-                                        <TableCell>
+                                        </div>
+                                        <div className="flex-1 min-w-0 pr-4">
                                           <p className="text-sm">{variantDescription}</p>
-                                        </TableCell>
-                                        <TableCell>
+                                        </div>
+                                        <div className="flex-1 min-w-0 pr-4">
                                           <div className="flex flex-wrap gap-1">
                                             {item.states.map((state) => (
                                               <Badge
@@ -339,37 +336,40 @@ export default function InventoryPage() {
                                               </Badge>
                                             ))}
                                           </div>
-                                        </TableCell>
-                                        <TableCell className="font-medium">{totals.totalQuantity}</TableCell>
-                                        <TableCell className="font-medium">
+                                        </div>
+                                        <div className="font-medium text-left align-middle px-4 py-2 flex-none w-24">
+                                          {totals.totalQuantity}
+                                        </div>
+                                        <div className="font-medium text-left align-middle px-4 py-2 flex-none w-32">
                                           S/ {totals.totalValue.toFixed(2)}
-                                        </TableCell>
-                                        <TableCell>
+                                        </div>
+                                        <div className="flex-none w-24">
                                           <div className="flex gap-1">
-                                            <button className="btn-ghost btn-small"
+                                            <button
+                                              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 w-8 p-0"
                                               onClick={() => router.push(`/dashboard/inventory/${item.id}`)}
                                             >
                                               <Eye className="w-4 h-4" />
                                             </button>
-                                            <button className="btn-ghost btn-small"
-                                              onClick={() =>
-                                                router.push(`/dashboard/inventory/add?edit=${item.id}`)
-                                              }
+                                            <button
+                                              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 w-8 p-0"
+                                              onClick={() => router.push(`/dashboard/inventory/add?edit=${item.id}`)}
                                             >
                                               <Edit className="w-4 h-4" />
                                             </button>
-                                            <button className="btn-ghost btn-small"
+                                            <button
+                                              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-destructive hover:text-destructive-foreground h-8 w-8 p-0"
                                               onClick={() => handleDeleteItem(item.id)}
                                             >
                                               <Trash2 className="w-4 h-4" />
                                             </button>
                                           </div>
-                                        </TableCell>
-                                      </TableRow>
+                                        </div>
+                                      </div>
                                     )
                                   })}
-                                </TableBody>
-                              </Table>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>

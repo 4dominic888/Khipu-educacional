@@ -4,21 +4,6 @@ import type React from "react"
 
 import { useState, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import {
-  SidebarProvider,
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarFooter,
-  SidebarTrigger,
-  SidebarInset,
-} from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -37,7 +22,6 @@ import {
   Shield,
   HelpCircle,
   Settings,
-  User,
   Calendar,
   LogOut,
   Plus,

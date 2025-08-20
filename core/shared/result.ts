@@ -6,11 +6,6 @@ class Success<T> {
         public readonly value: T,
         public message: string = 'Operación exitosa'
     ) {}
-
-    withMessage(msg: string): this {
-        this.message = msg;
-        return this;
-    }
 }
 
 class Failure<E> {
@@ -21,11 +16,6 @@ class Failure<E> {
         public readonly error: E,
         public message: string = 'Ocurrió un error'
     ) {}
-
-    withMessage(msg: string): this {
-        this.message = msg;
-        return this;
-    }
 }
 
 //* Helpers

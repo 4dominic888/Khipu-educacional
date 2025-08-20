@@ -108,16 +108,16 @@ export class PostgreCatalogItemRepository implements CatalogItemRepository {
     }
 
     @LogMethod()
-    async removeEverything(): Promise<Result<number, string>> {
-        const { data, error } = await supaClient.from('catalog_item').delete().neq("id", '').select('id');
+    async removeEverything({dry_run = false}: { dry_run?: boolean }): Promise<Result<number, string>> {
+        const { data, error } = await supaClient.rpc('remove_everything_catalogs', { dry_run })
         if (error) {
             logger.error('Error removing all catalog items', error);
             return failure(postgreDefaultErrorMessage(error));
         }
-        if(!data.length) {
-            logger.error('the quantity of items removed is not defined and could be null', { countValue: data.length });
+        if(data === null) {
+            logger.error('the quantity of items removed is not defined and could be null', { countValue: data });
             return failure("No se han podido eliminar todos los elementos del catálogo");
         }
-        return success(data.length);
+        return success(data);
     }
 }

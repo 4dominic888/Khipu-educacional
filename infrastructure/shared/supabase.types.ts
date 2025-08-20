@@ -288,9 +288,9 @@ export type Database = {
     Functions: {
       add_variant_with_acquisition: {
         Args: {
-          _inventory_item_id: string
-          _variant: Database["public"]["CompositeTypes"]["variant_input"]
           _acquisition: Database["public"]["CompositeTypes"]["acquisition_input"]
+          _variant: Database["public"]["CompositeTypes"]["variant_input"]
+          _inventory_item_id: string
         }
         Returns: string
       }
@@ -319,11 +319,15 @@ export type Database = {
           updated_at: string | null
         }
       }
+      remove_everything_catalogs: {
+        Args: { dry_run?: boolean }
+        Returns: number
+      }
       update_variant_with_acquisition: {
         Args: {
-          _variant: Database["public"]["CompositeTypes"]["variant_input"]
-          _acquisition: Database["public"]["CompositeTypes"]["acquisition_input"]
           _variant_inventory_item_id: string
+          _acquisition: Database["public"]["CompositeTypes"]["acquisition_input"]
+          _variant: Database["public"]["CompositeTypes"]["variant_input"]
         }
         Returns: undefined
       }

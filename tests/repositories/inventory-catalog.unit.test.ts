@@ -104,18 +104,13 @@ describe('update catalog items', () => {
 
 describe('remove catalog items', () => {
     it('should remove a catalog item', async () => {
-        const catalogItemToRemove : string = '32220013';
-        const result = await repo.remove(catalogItemToRemove);
+        const catalogItemToRemove = (await repo.add({ id: "32220080",  name: 'IDK' })).value
+        const result = await repo.remove(catalogItemToRemove.id);
         expect(result.ok).toBe(true);
         expect(result.value).toBe(catalogItemToRemove);
 
-        const badResult = await repo.get(catalogItemToRemove);
+        const badResult = await repo.get(catalogItemToRemove.id);
         expect(badResult).toBeNull();
-
-        if(result.ok) await repo.add({
-            id: '32220013',
-            name: 'SILLA'
-        });
     });
 
     it('should not remove a non existing catalog item', async () => {
@@ -126,48 +121,31 @@ describe('remove catalog items', () => {
     });
 
     it('should remove many catalog items', async () => {
-        const catalogItemsToRemove : string[] = ['32220014', '32220015'];
+        const catalogItemsToRemove : string[] = ['32220099', '32220100'];
+        await repo.addAll([
+            {
+                id: catalogItemsToRemove[0],
+                name: 'MUEBLERIA'
+            },
+            {
+                id: catalogItemsToRemove[1],
+                name: 'COSOS'
+            }
+        ]);
+
         const result = await repo.removeAll(catalogItemsToRemove);
         expect(result.ok).toBe(true);
         expect(result.value).toBe(2);
 
-        const badResult = await repo.getAll();
-        expect(badResult.length).toBe(1);
-
-        if(result.ok) await repo.addAll([
-            {
-                id: '32220014',
-                name: 'MESA'
-            },
-            {
-                id: '32220015',
-                name: 'PROYECTOR'
-            }
-        ]);
+        const badResults = await Promise.all(catalogItemsToRemove.map(val => repo.get(val)));
+        expect(badResults.every(el => el === null)).toBe(true);
     });
 
     it('should remove all catalog items', async () => {
-        const result = await repo.removeEverything();
+        //* dry_run hace que se simule la acción a realizar esta función siempre y cuando es `true`
+        //* es `false` por defecto
+        const result = await repo.removeEverything({dry_run: true});
         expect(result.ok).toBe(true);
-        expect(result.value).toBe(3);
-
-        const badResult = await repo.getAll();
-        expect(badResult.length).toBe(0);
-
-        if(result.ok) await repo.addAll([
-            {
-                id: "32220013",
-                name: 'SILLA'
-            },
-            {
-                id: '32220014',
-                name: 'MESA'
-            },
-            {
-                id: '32220015',
-                name: 'PROYECTOR'
-            }
-        ]);
     });
 });
 

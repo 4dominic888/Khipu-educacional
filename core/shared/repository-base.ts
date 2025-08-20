@@ -101,7 +101,7 @@ export interface RepositoryRemovable {
 */
 export interface RepositoryRemovableAllable {
   removeAll(ids: string[]): Promise<Result<number, string>>;
-  removeEverything(): Promise<Result<number, string>>;
+  removeEverything({dry_run}: { dry_run?: boolean }): Promise<Result<number, string>>;
 }
 
 /**
@@ -114,7 +114,7 @@ export interface RepositoryRemovableAllable {
  * Retorna un `Result<number, string>` con la cantidad de elementos eliminados si la operación tuvo éxito, o un mensaje de error si no.
 */
 export interface RepositoryRemovableEverythingable {
-  removeEverything(): Promise<Result<number, string>>;
+  removeEverything({dry_run}: { dry_run?: boolean }): Promise<Result<number, string>>;
 }
 
 /**

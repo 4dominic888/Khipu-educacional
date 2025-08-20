@@ -30,10 +30,10 @@ export class PostgreInventoryItemRepository implements InventoryItemRepository {
     }
 
     @LogMethod()
-    async add(data: CreateInventoryItemDto): Promise<Result<InventoryItem, string>> {
+    async add(data: CreateInventoryItemDto): Promise<Result<InventoryItemInfoDto, string>> {
         const { data: item, error } = await supaClient.from('inventory_item').insert({
             group_id: data.groupId,
-            catalog_item_id: data.catalogItem.id,
+            catalog_item_id: data.catalogItemId,
             total: 0
         }).select('*, catalog_item(*)').single();
 
@@ -42,10 +42,9 @@ export class PostgreInventoryItemRepository implements InventoryItemRepository {
             return failure(postgreDefaultErrorMessage(error));
         }
 
-        return success({
+        return success<InventoryItemInfoDto>({
             ...item,
             catalogItem: item.catalog_item,
-            variant: [],
         });
     }
 
@@ -67,6 +66,12 @@ export class PostgreInventoryItemRepository implements InventoryItemRepository {
 
     @LogMethod()
     async remove(id: string): Promise<Result<string, string>> {
+        const variantsDeletedResult = await this.deleteVariants(id);
+        if (!variantsDeletedResult.ok) {
+            logger.error(`Error deleting variants from inventory item with id ${id}`);
+            return variantsDeletedResult;
+        }
+
         const { error } = await supaClient.from('inventory_item').delete().eq('id', id);
         if (error) {
             logger.error('Error removing inventory item', error);
@@ -115,7 +120,7 @@ export class PostgreInventoryItemRepository implements InventoryItemRepository {
 
     @LogMethod()
     async getAll(query?: QueryParams<InventoryItem> | undefined): Promise<InventoryItemInfoDto[]> {
-        const completeQuery = buildQueryFromParams(supaClient.from('inventory_item_summary').select('*, catalog_item(*)'), query);
+        const completeQuery = buildQueryFromParams(supaClient.from('inventory_item_summary').select('*'), query);
         const { data, error } = await completeQuery;
         if (error) {
             logger.error('Error getting inventory items', error);

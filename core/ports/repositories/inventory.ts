@@ -12,9 +12,6 @@ import {
     EditVariantInventoryItemDto,
     CreateVariantInventoryItemDto,
     InventoryGroupDto,
-    Acquisition,
-    CreateAcquisitionDto,
-    EditAcquisitionDto,
     InventoryItemInfoDto,
 } from "@/core/domain";
 
@@ -84,9 +81,17 @@ export interface InventoryGroupRepository extends
  * Solo se encarga de un CRUD sencillo sin más. Pero solo acerca de la información del item, pero no de las variaciones de los items que contiene.
  */
 export interface InventoryItemRepository extends 
-    Omit<RepositoryFull<InventoryItem, CreateInventoryItemDto, EditInventoryItemDto>, "getAll">,
+    Omit<RepositoryFull<InventoryItem, CreateInventoryItemDto, EditInventoryItemDto>, "getAll" | "add">,
     RepositoryDuplicable
 {
+
+    /**
+     * Añade un item de inventario.
+     * @param data Datos del item de inventario
+     * @returns Resultado de la operación, si tuvo éxito, o un mensaje de error si no.
+     */
+    add(data: CreateInventoryItemDto): Promise<Result<InventoryItemInfoDto, string>>;
+
     /**
      * Mueve un item de inventario a otro grupo.
      * @param itemId ID del item a mover
@@ -121,7 +126,7 @@ export interface InventoryItemRepository extends
      * @param query Parametros de búsqueda
      * @returns Lista de items de inventario
      */
-    getAll(query?: QueryParams<InventoryItem> | undefined): Promise<InventoryItemInfoDto[]>
+    getAll(query?: QueryParams<Omit<InventoryItem, "catalogItem" | "variant" | "update_at">> | undefined): Promise<InventoryItemInfoDto[]>
 }
 
 /**

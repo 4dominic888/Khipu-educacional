@@ -34,7 +34,7 @@ export interface InventoryItem {
 export type ConservationStatus = "Bueno" | "Regular" | "Malo";
 
 export interface VariantInventoryItem {
-    id: string
+    id: string,
     color: string,
     inventory_item_id: string,
     dimensions: { //* Medidas en metros decimales

@@ -106,7 +106,7 @@ describe('remove catalog items', () => {
         const catalogItemToRemove = (await repo.add({ id: "32220080",  name: 'IDK' })).value
         const result = await repo.remove(catalogItemToRemove.id);
         expect(result.ok).toBe(true);
-        expect(result.value).toBe(catalogItemToRemove);
+        expect(result.value).toBe(catalogItemToRemove.id);
 
         const badResult = await repo.get(catalogItemToRemove.id);
         expect(badResult).toBeNull();

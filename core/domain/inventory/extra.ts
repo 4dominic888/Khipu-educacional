@@ -7,7 +7,7 @@ export type CreateInventoryGroupDto = Omit<InventoryGroup, "id" | "items" | "upd
 export type InventoryGroupDto = Omit<InventoryGroup, "items">;
 
 export type InventoryItemInfoDto = Pick<InventoryItem, "id" | "total" | "catalogItem">;
-export type CreateInventoryItemDto = Omit<InventoryItem, "id" | "total" | "update_at"> & { groupId: string };
+export type CreateInventoryItemDto = Omit<InventoryItem, "id" | "total" | "update_at" | "catalogItem" | "variant"> & { groupId: string, catalogItemId: string };
 export type EditInventoryItemDto = RequireAtLeastOne<Omit<InventoryItem, "total" | "variant" | "update_at" | "id">> & { id: string };
 export type InventoryItemDto = {
     catalog_item_id: string | null;

@@ -1,6 +1,6 @@
 import { CatalogItem } from '@/core/domain';
 import { CatalogItemRepository } from '@/core/ports/repositories/inventory';
-import { asFailure, QueryParams } from '@/core/shared';
+import { asFailure } from '@/core/shared';
 import { PostgreCatalogItemRepository } from '@/infrastructure/repositories/catalog';
 import { deleteLogs } from '@/infrastructure/shared/logger';
 import { beforeAll, describe, it } from 'vitest'
@@ -67,7 +67,6 @@ describe('get catalog items', () => {
         expect(result.length).toBe(2);
         expect(result.find(item => item.name === 'MESA')).toBeDefined();
         expect(result.find(item => item.name === 'SILLA')).toBeDefined();
-        //expect(result.find(item => item.name === 'PROYECTOR')).toBeDefined();
     });
 });
 

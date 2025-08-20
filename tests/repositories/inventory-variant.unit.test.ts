@@ -14,7 +14,6 @@ beforeAll(async () => {
 
 describe("Get a variant from item", () => {
     it("should get a variant from item", async () => {
-
         const variantToGet = (await repo.get('40000000-0000-0000-0000-000000000001'))!;
         expect(variantToGet).toBeDefined();
         expect(variantToGet.id).toBe('40000000-0000-0000-0000-000000000001');
@@ -29,6 +28,13 @@ describe("Get a variant from item", () => {
 
         const result = await repo.get(variantToGet);
         expect(result).toBeNull();
+    });
+
+    it("should get a variant from inventory item id", async () => {
+        const variantsFromSomeInventoryItem = await repo.getAllByInventoryItemId('20000000-0000-0000-0000-000000000003')
+
+        expect(variantsFromSomeInventoryItem.length).toBe(2);
+        expect(variantsFromSomeInventoryItem.some(variant => variant.id == '40000000-0000-0000-0000-000000000004'))
     });
 });
 

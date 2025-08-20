@@ -20,7 +20,8 @@ create table public.inventory_item (
   group_id uuid not null references public.inventory_group(id) on delete cascade,
   catalog_item_id text not null references public.catalog_item(id) on delete cascade,
   total integer not null check (total >= 0),
-  updated_at timestamp with time zone default now()
+  updated_at timestamp with time zone default now(),
+  unique (group_id, catalog_item_id)
 );
 
 -- Adquisición

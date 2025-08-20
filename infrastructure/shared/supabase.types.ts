@@ -17,10 +17,10 @@ export type Database = {
     Functions: {
       graphql: {
         Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
           variables?: Json
+          query?: string
+          operationName?: string
+          extensions?: Json
         }
         Returns: Json
       }
@@ -288,9 +288,9 @@ export type Database = {
     Functions: {
       add_variant_with_acquisition: {
         Args: {
-          _acquisition: Database["public"]["CompositeTypes"]["acquisition_input"]
-          _variant: Database["public"]["CompositeTypes"]["variant_input"]
           _inventory_item_id: string
+          _variant: Database["public"]["CompositeTypes"]["variant_input"]
+          _acquisition: Database["public"]["CompositeTypes"]["acquisition_input"]
         }
         Returns: string
       }
@@ -308,8 +308,8 @@ export type Database = {
       }
       edit_group: {
         Args: {
-          group_value: Database["public"]["CompositeTypes"]["group_input"]
           inventory_group_id_to_edit: string
+          group_value: Database["public"]["CompositeTypes"]["group_input"]
         }
         Returns: {
           description: string | null
@@ -323,11 +323,15 @@ export type Database = {
         Args: { dry_run?: boolean }
         Returns: number
       }
+      remove_everything_groups: {
+        Args: { dry_run?: boolean }
+        Returns: number
+      }
       update_variant_with_acquisition: {
         Args: {
           _variant_inventory_item_id: string
-          _acquisition: Database["public"]["CompositeTypes"]["acquisition_input"]
           _variant: Database["public"]["CompositeTypes"]["variant_input"]
+          _acquisition: Database["public"]["CompositeTypes"]["acquisition_input"]
         }
         Returns: undefined
       }

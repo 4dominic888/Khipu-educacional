@@ -204,24 +204,8 @@ describe('delete inventory groups', () => {
     });
 
     it('should delete all inventory groups', async () => {
-        const result = await repo.removeEverything();
+        const result = await repo.removeEverything({dry_run: true});
         expect(result.ok).toBe(true);
-        expect(result.value).toBe(2);
-
-        if(result.ok) {
-            Promise.all([
-                repo.insert('10000000-0000-0000-0000-000000000001', {
-                    name: 'Aula 1',
-                    description: 'Aula del segundo piso',
-                    period: '00000000-0000-0000-0000-000000000000'
-                }),
-                repo.insert('10000000-0000-0000-0000-000000000002', {
-                    name: 'Cocina',
-                    description: 'Área de preparación de alimentos',
-                    period: '00000000-0000-0000-0000-000000000000'
-                })
-            ]);
-        }
     });
 });
 

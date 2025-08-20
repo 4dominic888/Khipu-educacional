@@ -133,19 +133,19 @@ export class PostgreInventoryGroupRepository implements InventoryGroupRepository
     }
 
     @LogMethod()
-    async removeEverything(): Promise<Result<number, string>> {
-        const { error, data } = await supaClient.from('inventory_group').delete().neq("name", '').select('id');
+    async removeEverything({dry_run = false}: { dry_run?: boolean }): Promise<Result<number, string>> {
+        const { error, data } = await supaClient.rpc('remove_everything_groups', { dry_run} );
         if (error) {
             logger.error('Error removing inventory groups', error);
             return failure(postgreDefaultErrorMessage(error));
         }
 
-        if(!data.length) {
-            logger.error('Error removing inventory groups', { countValue: data.length });
+        if(data === null) {
+            logger.error('Error removing inventory groups', { countValue: data });
             return failure("No se ha eliminado ningún grupo de inventario");
         }
 
-        return success(data.length);
+        return success(data);
     }
 
     @LogMethod()
